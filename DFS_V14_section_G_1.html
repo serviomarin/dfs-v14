@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 — Section G : Glossaire des formes de maltraitement</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:#2A4A6A;color:#E8E0D0;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid rgba(200,168,112,0.2);position:sticky;top:0;background:rgba(42,74,106,0.97);z-index:50}
+.topbar-left{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870}
+.topbar-nav{display:flex;gap:18px;flex-wrap:wrap}
+.topbar-nav a{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#A09070;text-decoration:none;transition:color 0.2s}
+.topbar-nav a:hover{color:#E8C890}
+.topbar-nav a.active{color:#C8A870}
+.main{max-width:680px;margin:0 auto;padding:56px 30px}
+.eyebrow{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#C8A870;margin-bottom:14px}
+.sec-title{font-size:34px;font-weight:300;line-height:1.2;color:#E8E0D0;margin-bottom:8px}
+.sec-sub{font-size:16px;font-weight:300;font-style:italic;color:#B09870;margin-bottom:44px;padding-bottom:30px;border-bottom:0.5px solid rgba(200,168,112,0.15)}
+.prose p{font-size:18px;font-weight:300;line-height:1.85;color:#E0D8C8;margin-bottom:22px;text-align:justify}
+.prose h2{font-family:'Spectral',serif;font-size:20px;font-weight:600;letter-spacing:0.06em;color:#F0E8D8;margin:44px 0 14px;padding-top:28px;border-top:0.5px solid rgba(200,168,112,0.12)}
+.vr{font-style:italic;font-weight:600;color:#C8A870}
+.clink{color:#C8A870;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:italic}
+
+/* GLOSSARY ENTRIES */
+.gloss-entry{margin-bottom:28px;padding:22px 26px;background:rgba(200,168,112,0.05);border:0.5px solid rgba(200,168,112,0.2);border-radius:3px}
+.gloss-header{display:flex;align-items:baseline;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.gloss-num{font-family:'Spectral',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#706040}
+.gloss-name{font-size:20px;font-weight:600;color:#E8E0D0}
+.gloss-bmax{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.15em;padding:3px 10px;border-radius:2px;white-space:nowrap}
+.bmax-high{color:#AA6A6A;border:0.5px solid rgba(170,106,106,0.45);background:rgba(170,106,106,0.09)}
+.bmax-mid{color:#C8A870;border:0.5px solid rgba(200,168,112,0.4);background:rgba(200,168,112,0.07)}
+.bmax-low{color:#6AAA85;border:0.5px solid rgba(106,170,133,0.4);background:rgba(106,170,133,0.07)}
+.gloss-def{font-size:17px;font-weight:300;line-height:1.8;color:#D0C8B8;margin-bottom:10px}
+.gloss-example{font-size:15px;font-style:italic;color:#907850;border-left:2px solid rgba(200,168,112,0.3);padding-left:14px;margin-top:10px}
+.gloss-var{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#506848;margin-top:8px}
+
+/* TEST CTA */
+.test-cta{margin:48px 0;padding:32px;border:1px solid rgba(200,168,112,0.45);border-radius:4px;background:rgba(200,168,112,0.06);text-align:center}
+.test-cta-label{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870;margin-bottom:16px;display:block}
+.test-cta-title{font-size:24px;font-weight:300;color:#E8E0D0;margin-bottom:12px;line-height:1.35}
+.test-cta-desc{font-size:16px;font-weight:300;font-style:italic;color:#B09870;margin-bottom:24px;line-height:1.65}
+.test-cta-btn{display:inline-block;font-family:'Spectral',serif;font-size:12px;letter-spacing:0.25em;text-transform:uppercase;background:#C8A870;color:#0A1628;padding:14px 40px;border-radius:2px;text-decoration:none;transition:all 0.2s}
+.test-cta-btn:hover{background:#E8C890}
+
+.sec-footer{display:flex;justify-content:flex-start;margin-top:56px;padding-top:24px;border-top:0.5px solid rgba(200,168,112,0.15)}
+.nav-btn{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#A09070;background:none;border:0.5px solid rgba(200,168,112,0.25);padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none;transition:all 0.2s}
+.nav-btn:hover{color:#C8A870;border-color:rgba(200,168,112,0.6)}
+
+#pp{display:none;position:fixed;background:#1E3452;border:0.5px solid rgba(200,168,112,0.55);border-radius:4px;padding:20px 22px;width:270px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+#pp.on{display:block}
+#pp-ey{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:6px}
+#pp-ti{font-size:17px;font-weight:400;color:#F0E8D8;margin-bottom:8px;line-height:1.3}
+#pp-bo{font-size:13px;font-weight:300;font-style:italic;line-height:1.6;color:#C8C0A8;margin-bottom:6px}
+#pp-fo{font-size:12px;color:#C8A870;background:rgba(200,168,112,0.1);padding:6px 10px;border-radius:2px;display:none}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+  <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html">A</a>
+    <a href="DFS_V14_section_A2.html">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html">B2</a>
+    <a href="DFS_V14_section_C_1.html">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html" class="active">G</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="eyebrow">Section G — Dernière section</div>
+  <h1 class="sec-title">Glossaire des formes<br>de maltraitement</h1>
+  <p class="sec-sub">10 formes identifiées · Valeurs Bmax · Calibration DFS · Exemples tirés du mail R1</p>
+
+  <div class="prose">
+    <p>Le DFS identifie dix formes distinctes de maltraitement psychosocial, chacune avec une valeur <span class="vr">Bmax</span> caractéristique sur l&rsquo;\u00e9chelle 0–1. Ces formes ne sont pas mutuellement exclusives — elles se combinent et s&rsquo;amplifient. Leur présence simultanée dans un même texte est l&rsquo;un des critères de la stigmatisation structurelle.</p>
+
+    <!-- 1 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 01</span>
+        <span class="gloss-name">Le Non-dit stigmatisant</span>
+        <span class="gloss-bmax bmax-mid">Bmax typique : 0.40–0.60</span>
+      </div>
+      <div class="gloss-def">Encoder le bl\u00e2me ou le m\u00e9pris dans la <em>structure</em> de la phrase plutôt que dans les mots eux-mêmes — préservant ainsi la déniabilité. Le stigmatisant peut toujours dire : &laquo;\u00a0je n&rsquo;ai rien dit de mal\u00a0\u00bb.</div>
+      <div class="gloss-example">Exemple R1 — L1 : <em>&laquo;\u00a0pour des raisons qui te concernent\u00a0\u00bb</em> — sous-entend implicitement : c&rsquo;est ta faute.</div>
+      <div class="gloss-var">Variable principale → Bmax · Instrument → Baromètre DFS</div>
+    </div>
+
+    <!-- 2 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 02</span>
+        <span class="gloss-name">La Culpabilisation</span>
+        <span class="gloss-bmax bmax-high">Bmax typique : 0.70–0.90</span>
+      </div>
+      <div class="gloss-def">Retourner la responsabilité contre la victime — lui faire porter le poids d&rsquo;une situation dont elle n&rsquo;est pas l&rsquo;auteure. Opère souvent par l&rsquo;usage du conditionnel ou de la négation implicite.</div>
+      <div class="gloss-example">Exemple R1 — L2 : <em>&laquo;\u00a0Tu n&rsquo;aurais pas eu besoin d&rsquo;avancer les frais\u00a0\u00bb</em> — si tu avais fait ce qu&rsquo;on t&rsquo;a dit.</div>
+      <div class="gloss-var">Variable principale → Bmax · Pic : L2 du mail R1 (Bmax = 0.80)</div>
+    </div>
+
+    <!-- 3 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 03</span>
+        <span class="gloss-name">L&rsquo;Infantilisation</span>
+        <span class="gloss-bmax bmax-high">Bmax typique : 0.75–0.90</span>
+      </div>
+      <div class="gloss-def">Traiter un adulte comme s&rsquo;il était incapable de comprendre, de décider ou d&rsquo;agir de manière autonome. Se manifeste par des injonctions directes (&laquo;\u00a0tu n&rsquo;as pas besoin de\u00a0\u00bb) ou par l&rsquo;omission délibérée d&rsquo;explications.</div>
+      <div class="gloss-example">Exemple R1 — L4 : <em>&laquo;\u00a0Tu n&rsquo;as pas besoin de prendre contact avec Monsieur T\u00a0\u00bb</em> — ordre direct sans justification.</div>
+      <div class="gloss-var">Variable principale → Bmax · Corrélé à → e (épaisseur du discours)</div>
+    </div>
+
+    <!-- 4 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 04</span>
+        <span class="gloss-name">Le Bouclier bureaucratique</span>
+        <span class="gloss-bmax bmax-high">Bmax typique : 0.60–0.90</span>
+      </div>
+      <div class="gloss-def">Utiliser la procédure, le règlement ou l&rsquo;organigramme comme arme défensive pour esquiver la responsabilité, refuser d&rsquo;agir ou intimider. Chaque mention de &laquo;\u00a0procédure\u00a0\u00bb est un mur institutionnel.</div>
+      <div class="gloss-example">Exemple R1 — L3, L7, L8 : <em>&laquo;\u00a0il y a une procédure\u00a0\u00bb, &laquo;\u00a0des modalités et des échéances\u00a0\u00bb, &laquo;\u00a0également des procédures\u00a0\u00bb</em> — 5 murs en 8 lignes.</div>
+      <div class="gloss-var">Variable principale → e (épaisseur) · e = 0.90 dans le mail R1</div>
+    </div>
+
+    <!-- 5 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 05</span>
+        <span class="gloss-name">L&rsquo;Exclusion institutionnelle</span>
+        <span class="gloss-bmax bmax-high">Bmax typique : 0.70–0.85</span>
+      </div>
+      <div class="gloss-def">Rappeler à la personne qu&rsquo;elle n&rsquo;appartient plus à un groupe, une institution ou une catégorie protégée — en utilisant cette exclusion comme justification pour refuser de l&rsquo;aider ou la reconnaître.</div>
+      <div class="gloss-example">Exemple R1 — L5 : <em>&laquo;\u00a0Puisque tu n&rsquo;es plus membre de LP\u00a0\u00bb</em> — l&rsquo;exclusion utilisée comme argument légitimant le refus.</div>
+      <div class="gloss-var">Variable principale → Bmax · Bmax L5 = 0.78</div>
+    </div>
+
+    <!-- 6 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 06</span>
+        <span class="gloss-name">Le Syndrome du Petit Roi (SPR)</span>
+        <span class="gloss-bmax bmax-high">Bmax typique : 0.65–0.90</span>
+      </div>
+      <div class="gloss-def">Une personne employée pour servir qui transforme son rôle en autorité personnelle — se servant du règlement comme d&rsquo;un drapeau et de l&rsquo;organigramme comme d&rsquo;un bouclier. Caractérisé par le ton d&rsquo;injonction et l&rsquo;absence totale d&rsquo;empathie institutionnelle.</div>
+      <div class="gloss-example">Exemple R1 — L3 à L6 : accumulation de directives sans explication ni reconnaissance de la contribution de R1.</div>
+      <div class="gloss-var">Variable principale → k (contexte institutionnel) · k = 0.85 dans le mail R1</div>
+    </div>
+
+    <!-- 7 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 07</span>
+        <span class="gloss-name">L&rsquo;Aumône rhétorique</span>
+        <span class="gloss-bmax bmax-mid">Bmax typique : 0.55–0.70</span>
+      </div>
+      <div class="gloss-def">Présenter un droit, un remboursement ou un service légitime comme une faveur personnelle accordée par la bienveillance de l&rsquo;institution ou de l&rsquo;agent — effaçant ainsi la contribution et les droits de la personne.</div>
+      <div class="gloss-example">Exemple R1 — L6 : <em>&laquo;\u00a0C&rsquo;est CS qui a accepté de prendre en charge\u00a0\u00bb</em> — un droit administratif présenté comme cadeau personnel.</div>
+      <div class="gloss-var">Variable principale → Bmax · Bmax L6 = 0.65</div>
+    </div>
+
+    <!-- 8 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 08</span>
+        <span class="gloss-name">Le Cloisonnement</span>
+        <span class="gloss-bmax bmax-mid">Bmax typique : 0.45–0.65</span>
+      </div>
+      <div class="gloss-def">Disperser la responsabilité entre plusieurs services, personnes ou procédures pour rendre l&rsquo;imputabilité impossible. La victime ne sait plus à qui s&rsquo;adresser — c&rsquo;est l&rsquo;effet recherché.</div>
+      <div class="gloss-example">Exemple R1 — L8 : <em>&laquo;\u00a0je ne suis pas décisionnaire — le service comptabilité à également des procédures\u00a0\u00bb</em> — responsabilité rendue introuvable.</div>
+      <div class="gloss-var">Variable principale → e (épaisseur) · Amplifie k</div>
+    </div>
+
+    <!-- 9 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 09</span>
+        <span class="gloss-name">La Fausse Bienveillance</span>
+        <span class="gloss-bmax bmax-mid">Bmax typique : 0.40–0.55</span>
+      </div>
+      <div class="gloss-def">Formuler un refus ou une sanction dans un langage empathique ou compréhensif — créant une dissonance cognitive chez la victime qui reçoit un message négatif enrobé dans une forme positive.</div>
+      <div class="gloss-example">Exemple R1 — L8 : <em>&laquo;\u00a0Je comprend que tu ai besoin d&rsquo;un remboursement rapide\u00a0\u00bb</em> — suivi d&rsquo;un refus implicite.</div>
+      <div class="gloss-var">Variable principale → Bmax · Les fautes grammaticales trahissent le peu de soin accordé</div>
+    </div>
+
+    <!-- 10 -->
+    <div class="gloss-entry">
+      <div class="gloss-header">
+        <span class="gloss-num">Forme 10</span>
+        <span class="gloss-name">Le Silence Complice (ks)</span>
+        <span class="gloss-bmax bmax-high">Amplificateur global</span>
+      </div>
+      <div class="gloss-def">L&rsquo;accord tacite collectif qui valide et pérennise la stigmatisation — le sédiment historique de préjugés partagés qui rend toutes les autres formes possibles et acceptables. Ce n&rsquo;est pas une forme active mais une constante structurelle.</div>
+      <div class="gloss-example">Dans le mail R1 : la présence de CS en CC n&rsquo;est pas anodine — c&rsquo;est le témoin silencieux dont la présence valide le message de P1 à R1.</div>
+      <div class="gloss-var">Variable principale → ks (constante d&rsquo;amplification) · Amplifie tous les autres facteurs sans exception</div>
+    </div>
+
+  </div>
+
+  <!-- TEST CTA -->
+  <div class="test-cta">
+    <span class="test-cta-label">Validation subjective — Nouveau</span>
+    <div class="test-cta-title">Comment ce mail vous a-t-il fait sentir ?</div>
+    <div class="test-cta-desc">Lisez chaque ligne du mail comme si elle vous était adressée personnellement.<br>Choisissez les mots qui décrivent ce que vous ressentez.<br>Vos réponses sont comparées au score DFS ligne par ligne.</div>
+    <a href="DFS_V14_section_G_test.html" class="test-cta-btn">Commencer le test →</a>
+  </div>
+
+  <div class="sec-footer">
+    <a href="DFS_V14_section_F_1.html" class="nav-btn">&larr; Section F</a>
+  </div>
+</div>
+
+<div id="pp">
+  <div id="pp-ey"></div>
+  <div id="pp-ti"></div>
+  <div id="pp-bo"></div>
+  <div id="pp-fo"></div>
+</div>
+
+<script>
+var D = {
+  bmax:{ey:"Instrument de mesure",ti:"Bmax \u2014 Charge normative",bo:"Valeur locale de l\u2019intensit\u00e9 stigmatisante pour une phrase donn\u00e9e, sur une \u00e9chelle de 0 \u00e0 1. 0 = m\u00e9pris brut non dissimul\u00e9. 1 = charge normative maximale. Dans le mail R1, le pic est L4 avec Bmax = 0.90.",fo:"Bmax global = 0.90 \u2014 mail R1"}
+};
+var pp=document.getElementById('pp'),tm=null;
+function show(el,key){
+  if(tm){clearTimeout(tm);tm=null;}
+  var d=D[key];if(!d)return;
+  document.getElementById('pp-ey').textContent=d.ey;
+  document.getElementById('pp-ti').textContent=d.ti;
+  document.getElementById('pp-bo').textContent=d.bo;
+  var fo=document.getElementById('pp-fo');
+  if(d.fo){fo.innerHTML=d.fo;fo.style.display='block';if(window.MathJax)MathJax.typesetPromise([fo]);}else{fo.style.display='none';}
+  pp.style.visibility='hidden';
+  pp.style.left='0px';
+  pp.style.top='-9999px';
+  pp.className='on';
+  var r=el.getBoundingClientRect();
+  var ppW=pp.offsetWidth||270;
+  var ppH=pp.offsetHeight||200;
+  pp.className='';
+  pp.style.visibility='';
+  var left=r.right+12;
+  if(left+ppW>window.innerWidth-8){left=r.left-ppW-12;}
+  if(left<8){left=8;}
+  var top=r.top;
+  if(top+ppH>window.innerHeight-8){top=r.bottom-ppH;}
+  if(top<8){top=8;}
+  pp.style.left=left+'px';
+  pp.style.top=top+'px';
+  pp.className='on';
+}
+function hide(){tm=setTimeout(function(){pp.className='';},250);}
+document.querySelectorAll('.clink').forEach(function(el){
+  el.addEventListener('mouseover',function(){show(el,el.dataset.key);});
+  el.addEventListener('mouseout',hide);
+  el.addEventListener('click',function(e){e.preventDefault();if(pp.className==='on'&&pp._key===el.dataset.key){hide();}else{pp._key=el.dataset.key;show(el,el.dataset.key);}});
+});
+pp.addEventListener('mouseover',function(){if(tm){clearTimeout(tm);tm=null;}});
+pp.addEventListener('mouseout',hide);
+</script>
+</body>
+</html>

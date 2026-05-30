@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 - Section A</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:#0A1628;color:#E8E0D0;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid rgba(200,168,112,0.2);position:sticky;top:0;background:rgba(10,22,40,0.97);z-index:50}
+.topbar-left{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870}
+.topbar-nav{display:flex;gap:18px}
+.topbar-nav a{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#706040;text-decoration:none}
+.topbar-nav a.active{color:#C8A870}
+.main{max-width:680px;margin:0 auto;padding:56px 30px}
+.eyebrow{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#C8A870;margin-bottom:14px}
+.sec-title{font-size:34px;font-weight:300;line-height:1.2;color:#E8E0D0;margin-bottom:8px}
+.sec-sub{font-size:16px;font-weight:300;font-style:italic;color:#907850;margin-bottom:44px;padding-bottom:30px;border-bottom:0.5px solid rgba(200,168,112,0.15)}
+.prose p{font-size:18px;font-weight:300;line-height:1.85;color:#D0C8B8;margin-bottom:22px;text-align:justify}
+.prose h2{font-family:'Spectral',serif;font-size:20px;font-weight:600;letter-spacing:0.06em;color:#E8E0D0;margin:44px 0 14px;padding-top:28px;border-top:0.5px solid rgba(200,168,112,0.12)}
+.quote-block{border-left:2px solid #C8A870;padding:18px 26px;margin:32px 0;background:rgba(200,168,112,0.04)}
+.quote-block p{font-size:19px!important;font-style:italic;color:#D8CEB8!important}
+.quote-author{font-family:'Spectral',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;margin-top:10px;display:block}
+.clink{color:#C8A870;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:italic}
+.cbox{background:rgba(200,168,112,0.06);border:0.5px solid rgba(200,168,112,0.25);border-radius:3px;padding:18px 22px;margin:24px 0}
+.cbox-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870;margin-bottom:8px}
+.cbox p{font-size:16px!important;color:#C0B8A0!important;margin-bottom:0!important}
+.vr{font-style:italic;font-weight:600;color:#C8A870}
+.sec-footer{display:flex;justify-content:space-between;margin-top:56px;padding-top:24px;border-top:0.5px solid rgba(200,168,112,0.15)}
+.nav-btn{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#706040;background:none;border:0.5px solid rgba(200,168,112,0.2);padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none}
+.nav-btn.next{background:rgba(200,168,112,0.08);color:#C8A870}
+#pp{display:none;position:fixed;background:#0F1E32;border:0.5px solid rgba(200,168,112,0.5);border-radius:4px;padding:20px 22px;width:270px;z-index:200}
+#pp.on{display:block}
+#pp-ey{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:6px}
+#pp-ti{font-size:17px;font-weight:400;color:#E8E0D0;margin-bottom:8px;line-height:1.3}
+#pp-bo{font-size:13px;font-weight:300;font-style:italic;line-height:1.6;color:#C0B8A0;margin-bottom:6px}
+#pp-fo{font-size:12px;color:#C8A870;background:rgba(200,168,112,0.08);padding:6px 10px;border-radius:2px;display:none}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+  <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html" class="active">A</a>
+    <a href="DFS_V14_section_A2.html">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html">B2</a>
+    <a href="DFS_V14_section_C_1.html">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html">G</a>
+  </div>
+</nav>
+<div class="main">
+  <div class="eyebrow">Section A</div>
+  <h1 class="sec-title">Le r&ocirc;le f&eacute;d&eacute;rateur<br>de la stigmatisation (St)</h1>
+  <p class="sec-sub">Malgr&eacute; sa nature destructive, St est socialement accept&eacute;e &mdash; et c&rsquo;est pr&eacute;cis&eacute;ment cela qui la rend puissante</p>
+  <div class="prose">
+    <div class="quote-block">
+      <p>La stigmatisation, on ne peut pas la voir dans les mots &eacute;crits, mais on sent son oppressive odeur &mdash; &eacute;manant de sa structure sociale, consolid&eacute;e et fusionnellement dilu&eacute;e dans les fils empoisonn&eacute;s de la toile d&rsquo;araign&eacute;e du <span class="clink" data-key="discours">Discours R&eacute;f&eacute;rentiel</span> m&eacute;prisant.</p>
+      <span class="quote-author">&mdash; Servio Marin</span>
+    </div>
+    <p>Le r&ocirc;le f&eacute;d&eacute;rateur de la stigmatisation (St) est contradictoire et impressionnant, pour une simple raison&nbsp;: la stigmatisation est socialement accept&eacute;e dans une sorte de <span class="clink" data-key="sc">Silence Complice</span>. Ce silence complice est un &eacute;l&eacute;ment constitutif qui substante la toile d&rsquo;araign&eacute;e qu&rsquo;est le discours r&eacute;f&eacute;rentiel &mdash; un ensemble de conceptions psychosociales, un espace vectoriel de teneur vulgaire du territoire radical de la d&eacute;valorisation d&rsquo;autrui.</p>
+    <p>Cet ensemble d&rsquo;id&eacute;es d&eacute;valorisantes est accept&eacute; par une large majorit&eacute; de membres de la classe h&eacute;g&eacute;monique. Le plaisir de d&eacute;valoriser incr&eacute;mente la sensation de pouvoir des <span class="clink" data-key="ia">agents stigmatisants</span>. Ce plaisir d&eacute;termine un grand accord tacite &mdash; presque devenu inconscient collectif &mdash; garantissant le silence complice qui &agrave; son tour soutient St.</p>
+    <h2>A1. Le discours r&eacute;f&eacute;rentiel comme toile d&rsquo;araign&eacute;e</h2>
+    <p>Le <span class="clink" data-key="discours">discours r&eacute;f&eacute;rentiel</span> fonctionne comme une toile d&rsquo;araign&eacute;e de significations implicites. Comme les cordes sympathiques d&rsquo;un instrument qui vibrent par r&eacute;sonance sans &ecirc;tre touch&eacute;es, derri&egrave;re chaque mot &eacute;crit dans un texte stigmatisant vibrent des mots non &eacute;crits dont les connotations m&eacute;prisantes s&rsquo;entendent sans &ecirc;tre prononc&eacute;es. C&rsquo;est ce ph&eacute;nom&egrave;ne que le <span class="clink" data-key="dfs">DFS</span> cherche &agrave; mesurer.</p>
+    <div class="cbox">
+      <div class="cbox-label">Note sur &laquo;&nbsp;sentir&nbsp;&raquo;</div>
+      <p>En fran&ccedil;ais, <em>sentir</em> signifie &agrave; la fois percevoir une odeur et ressentir. En espagnol aussi. L&rsquo;odeur est un stimulus vivace qui ouvre des m&eacute;moires multiples &mdash; elle invite le lecteur &agrave; d&eacute;passer le territoire formel et bureaucratique pour p&eacute;n&eacute;trer les recoins secrets de la conscience affect&eacute;s par St.</p>
+    </div>
+    <p>Au sein des groupes d&rsquo;agents stigmatisants (As), les commentaires circulent librement &mdash; comparaisons animales, diminutions, m&eacute;pris partag&eacute; &mdash; comme l&rsquo;herbe pousse apr&egrave;s la pluie : silencieusement, rapidement, partout &agrave; la fois. Jamais &eacute;crits, jamais officiels. Mais ils s&rsquo;infiltrent dans la toile du <span class="clink" data-key="discours">discours r&eacute;f&eacute;rentiel</span> et deviennent le terreau invisible du non-dit &mdash; pr&ecirc;t &agrave; &ecirc;tre <em>escamoteado</em> dans chaque communication institutionnelle, chaque &eacute;change diplomatique, chaque conversation de la vie courante.</p>
+
+    <p>Dans ce syst&egrave;me de sustentation &mdash; o&ugrave; les gestes prennent la place des mots non prononc&eacute;s par pudeur diplomatique &mdash;, la classe h&eacute;g&eacute;monique a d&eacute;velopp&eacute; un vocabulaire gestuel m&eacute;prisant d&rsquo;une richesse remarquable : regards qui remettent &agrave; leur place, silences calcul&eacute;s, sourires condescendants, postures de domination. Autant de mots sans mots, transmis et compris instantan&eacute;ment par tous les membres du club des As.</p>
+
+    <p>&Agrave; cette couche gestuelle s&rsquo;ajoute une troisi&egrave;me dimension, souvent n&eacute;glig&eacute;e : le ton de voix condescendant. Car on peut prononcer les mots les plus neutres du monde &mdash; et pourtant stigmatiser. Le ton porte ce que les mots nient. Il est la signature sonore du m&eacute;pris <em>escamoteado</em> &mdash; invisible dans un compte-rendu, inaudible dans un dossier, et pourtant imm&eacute;diatement ressenti par la victime stigmatis&eacute;e (Vs). C&rsquo;est ce territoire &mdash; gestuel, vocal, corporel &mdash; que la Section A2 explore.</p>
+
+    <h2>A2. Deux facteurs coh&eacute;sifs</h2>
+    <p>L&rsquo;invisibilit&eacute; de la stigmatisation la rend puissante et la transforme en &eacute;l&eacute;ment f&eacute;d&eacute;rateur, octroyant injustement unit&eacute;, bouclier protecteur et flagrante impunit&eacute; &agrave; certains groupes sociaux. St se propage tr&egrave;s t&ocirc;t &mdash; dans la vie d&rsquo;un enfant &mdash; &agrave; partir du milieu scolaire vers toutes les strates de notre soci&eacute;t&eacute;.</p>
+    <div class="cbox">
+      <div class="cbox-label">St comme cancer social</div>
+      <p>St ne se voit pas mais existe et se sent. Elle d&eacute;t&eacute;riore l&rsquo;appareil socio&eacute;conomique, affecte moralement, psychologiquement et financi&egrave;rement. Elle d&eacute;truit le tissu social. Elle doit &ecirc;tre combattue avec des instruments raffin&eacute;s de mesure &mdash; c&rsquo;est le r&ocirc;le du DFS.</p>
+    </div>
+    <h2>A3. Le silence complice comme variable <span class="vr">ks</span></h2>
+    <p>Le <span class="clink" data-key="sc">silence complice</span> n&rsquo;est pas l&rsquo;absence de stigmatisation &mdash; il en est la forme la plus puissante. Dans la <span class="clink" data-key="formule">formule DFS</span>, SC est absorb&eacute; dans la constante <span class="vr">ks</span>. Une soci&eacute;t&eacute; dont le SC est profond et ancien a un <span class="vr">ks</span> &eacute;lev&eacute;, qui amplifie tous les autres facteurs de stigmatisation.</p>
+    <p>C&rsquo;est pourquoi la g&eacute;n&eacute;alogie historique &mdash; l&rsquo;excavation du <span class="vr">ks</span> &mdash; est un pr&eacute;alable &agrave; toute intervention efficace. C&rsquo;est ce que la m&eacute;thode arch&eacute;ologique de Foucault dans <em>L&rsquo;Arch&eacute;ologie du savoir</em> cherche &agrave; faire.</p>
+    <h2>A4. Pourquoi St b&eacute;n&eacute;ficie-t-elle &agrave; la classe dominante&nbsp;?</h2>
+    <p>Dans son r&ocirc;le f&eacute;d&eacute;rateur, St favorise certaines attitudes, organise et normalise des moyens nocifs. Elle apporte des avantages politiques car dans St se cache un instrument de conspiration, d&rsquo;agitation, de contr&ocirc;le et de manipulation. Vu que St est accept&eacute;e comme conduite sociale &mdash; elle n&rsquo;est pas encore sanctionn&eacute;e l&eacute;galement &mdash; certains groupes sociaux s&rsquo;en servent pour maltraiter des gens. Ce n&rsquo;est pas une maltraitance physique &mdash; c&rsquo;est une maltraitance psychologique&nbsp;: dans le regard m&eacute;prisant, dans l&rsquo;attitude fausse-complaisante, dans la conduite d&eacute;nigrante.</p>
+  </div>
+  <div class="sec-footer">
+    <a href="DFS_V14_navigation_V15.html" class="nav-btn">&larr; Table des mati&egrave;res</a>
+    <a href="DFS_V14_section_A2.html" class="nav-btn next">Section A2 &rarr;</a>
+  </div>
+</div>
+
+<div id="pp">
+  <div id="pp-ey"></div>
+  <div id="pp-ti"></div>
+  <div id="pp-bo"></div>
+  <div id="pp-fo"></div>
+</div>
+
+<script>
+var D = {
+  discours:{ey:"Concept cl\u00e9",ti:"Le Discours R\u00e9f\u00e9rentiel",bo:"Un ensemble de conceptions psychosociales qui d\u00e9termine le choix des mots. Comme une toile d\u2019araign\u00e9e, il fait vibrer par r\u00e9sonance des connotations non \u00e9crites \u2014 la couche invisible sur laquelle repose toute communication stigmatisante.",fo:null},
+  sc:{ey:"Variable ks",ti:"Le Silence Complice",bo:"Le silence complice n\u2019est pas l\u2019absence de stigmatisation \u2014 il en est la forme la plus puissante. Absorb\u00e9 dans la constante ks de la formule DFS. Un ks \u00e9lev\u00e9 amplifie tous les effets de St.",fo:"ks = susceptibilit\u00e9 sociale \u2014 s\u00e9diment historique du SC"},
+  ia:{ey:"Bin\u00f4me Vs + As",ti:"L\u2019agent stigmatisant (As)",bo:"As fonctionne comme un atome trop charg\u00e9 envoyant des charges stigmatisantes \u2014 souvent sans en \u00eatre conscient. Celui qui stigmatise est prisonnier de la stigmatisation qu\u2019il projette sur Vs.",fo:"\u03c1r = K(Vs + As) \u2014 au d\u00e9nominateur de la formule DFS"},
+  dfs:{ey:"L\u2019instrument",ti:"Le D\u00e9tecteur Foucaldien de Stigmatisation",bo:"Le DFS transpose la formule des courants de Foucault au domaine social pour mesurer les pertes d\u2019humanit\u00e9 invisibles. Il transforme ce que l\u2019on ressent intuitivement en connaissance v\u00e9rifiable.",fo:"\\[ P = \\frac{e^2 \\cdot B_{\\max}^2 \\cdot f^2}{k \\cdot \\rho_r} \\times V_f \\]"},
+  formule:{ey:"La formule DFS",ti:"Variables de la formule",bo:"e = \u00e9paisseur du discours r\u00e9f\u00e9rentiel \u2022 Bmax = charge normative stigmatisante \u2022 f = fr\u00e9quence d\u2019exposition \u2022 k = contexte institutionnel \u2022 \u03c1r = r\u00e9sistance psychosociale (Vs + As) \u2022 Vf = volume social expos\u00e9",fo:"\\[ P = \\frac{e^2 \\cdot B_{\\max}^2 \\cdot f^2}{k \\cdot \\rho_r} \\times V_f \\]"}
+};
+var pp=document.getElementById('pp'),tm=null;
+function show(el,key){
+  if(tm){clearTimeout(tm);tm=null;}
+  var d=D[key];if(!d)return;
+  document.getElementById('pp-ey').textContent=d.ey;
+  document.getElementById('pp-ti').textContent=d.ti;
+  document.getElementById('pp-bo').textContent=d.bo;
+  var fo=document.getElementById('pp-fo');
+  if(d.fo){fo.innerHTML=d.fo;fo.style.display='block';if(window.MathJax)MathJax.typesetPromise([fo]);}else{fo.style.display='none';}
+  var r=el.getBoundingClientRect();
+  /* measure real popup height off-screen */
+  pp.style.visibility='hidden';
+  pp.style.left='0px';
+  pp.style.top='-9999px';
+  pp.className='on';
+  var ppW=pp.offsetWidth||270;
+  var ppH=pp.offsetHeight||200;
+  pp.className='';
+  pp.style.visibility='';
+
+  /* horizontal: prefer right of link, fall back to left */
+  var left=r.right+12;
+  if(left+ppW>window.innerWidth-8){left=r.left-ppW-12;}
+  if(left<8){left=8;}
+
+  /* vertical: prefer aligned to top of link, shift up if clips bottom */
+  var top=r.top;
+  if(top+ppH>window.innerHeight-8){top=r.bottom-ppH;}
+  if(top<8){top=8;}
+
+  pp.style.left=left+'px';
+  pp.style.top=top+'px';
+  pp.className='on';
+}
+function hide(){tm=setTimeout(function(){pp.className='';},250);}
+var links=document.querySelectorAll('.clink');
+for(var i=0;i<links.length;i++){
+  (function(el){
+    el.addEventListener('mouseenter',function(){show(el,el.dataset.key);});
+    el.addEventListener('mouseleave',hide);
+  })(links[i]);
+}
+pp.addEventListener('mouseenter',function(){if(tm){clearTimeout(tm);tm=null;}});
+pp.addEventListener('mouseleave',hide);
+</script>
+</body>
+</html>

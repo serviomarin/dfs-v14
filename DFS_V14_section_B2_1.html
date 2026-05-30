@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 — Section B2 : Score DFS du mail</title>
+<script>
+MathJax = { tex: {inlineMath: [["$","$"]], displayMath: [["$$","$$"]]}, svg: {fontCache: "global"} };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:#2A4A6A;color:#E8E0D0;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid rgba(200,168,112,0.2);position:sticky;top:0;background:rgba(42,74,106,0.97);z-index:50}
+.topbar-left{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870}
+.topbar-nav{display:flex;gap:18px}
+.topbar-nav a{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#A09070;text-decoration:none;transition:color 0.2s}
+.topbar-nav a.active{color:#C8A870}
+.topbar-nav a:hover{color:#E8C890}
+.main{max-width:680px;margin:0 auto;padding:56px 30px}
+.eyebrow{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#C8A870;margin-bottom:14px}
+.sec-title{font-size:34px;font-weight:300;line-height:1.2;color:#E8E0D0;margin-bottom:8px}
+.sec-sub{font-size:16px;font-weight:300;font-style:italic;color:#B09870;margin-bottom:44px;padding-bottom:30px;border-bottom:0.5px solid rgba(200,168,112,0.15)}
+.prose p{font-size:18px;font-weight:300;line-height:1.85;color:#E0D8C8;margin-bottom:22px;text-align:justify}
+.prose h2{font-family:'Spectral',serif;font-size:20px;font-weight:600;letter-spacing:0.06em;color:#F0E8D8;margin:44px 0 14px;padding-top:28px;border-top:0.5px solid rgba(200,168,112,0.12)}
+.clink{color:#C8A870;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:italic}
+.vr{font-style:italic;font-weight:600;color:#C8A870}
+
+/* FORMULA */
+.formula-block{text-align:center;padding:32px;margin:32px 0;border:1px solid rgba(200,168,112,0.4);border-radius:4px;background:rgba(200,168,112,0.06)}
+.formula-text{font-size:22px;font-weight:300;color:#E8E0D0;margin-bottom:10px}
+.formula-sub{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#907850;margin-top:16px;display:block}
+.MJXc-display{color:#E8E0D0 !important}
+
+/* SCORE */
+.score-block{text-align:center;padding:36px;margin:32px 0;border:1px solid rgba(200,168,112,0.4);border-radius:4px;background:rgba(200,168,112,0.06)}
+.score-number{font-size:64px;font-weight:600;color:#C8A870;line-height:1}
+.score-pct{font-size:32px;font-weight:300;color:#C8A870}
+.score-label{font-family:'Spectral',serif;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:#907850;margin-top:10px;display:block}
+.score-calc{font-size:15px;color:#907850;margin-top:16px;font-style:italic}
+
+/* TABLES */
+.vars-table{width:100%;border-collapse:collapse;margin:24px 0}
+.vars-table th{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;padding:10px 12px;border-bottom:1px solid rgba(200,168,112,0.3);text-align:left;background:rgba(200,168,112,0.06)}
+.vars-table td{padding:12px;border-bottom:0.5px solid rgba(200,168,112,0.1);font-size:15px;font-weight:300;color:#D8D0C0;vertical-align:top;line-height:1.5}
+.vars-table td:first-child{font-family:'Spectral',serif;font-size:11px;font-weight:600;color:#C8A870;white-space:nowrap}
+.vars-table tr.result td{background:rgba(200,168,112,0.08);color:#F0E8D8}
+.vars-table tr.result td:first-child{color:#FFD890}
+
+.carto-table{width:100%;border-collapse:collapse;margin:24px 0}
+.carto-table th{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;padding:8px 10px;border-bottom:1px solid rgba(200,168,112,0.3);text-align:left;background:rgba(200,168,112,0.06)}
+.carto-table td{padding:10px;border-bottom:0.5px solid rgba(200,168,112,0.08);font-size:14px;font-weight:300;color:#D0C8B8;vertical-align:middle}
+.carto-table td:first-child{font-family:'Spectral',serif;font-size:10px;color:#C8A870;white-space:nowrap;font-weight:600}
+.carto-table tr.pic td{background:rgba(170,106,106,0.1);border-left:2px solid #AA6A6A}
+.carto-table tr.pic td:first-child{color:#FF9090}
+.score-cell{font-family:'Spectral',serif;font-weight:600;color:#C8A870}
+.score-cell.high{color:#FF9090}
+
+/* BOXES */
+.cbox{background:rgba(200,168,112,0.07);border:0.5px solid rgba(200,168,112,0.3);border-radius:3px;padding:18px 22px;margin:24px 0}
+.cbox-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870;margin-bottom:10px}
+.cbox p{font-size:16px!important;color:#D0C8B0!important;margin-bottom:8px!important;text-align:left!important;line-height:1.6!important}
+.cbox p:last-child{margin-bottom:0!important}
+.proof-box{background:rgba(106,170,133,0.07);border:0.5px solid rgba(106,170,133,0.35);border-radius:3px;padding:22px 26px;margin:32px 0}
+.proof-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#6AAA85;margin-bottom:14px}
+.proof-item{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.proof-item:last-child{margin-bottom:0}
+.proof-num{font-family:'Spectral',serif;font-size:11px;color:#6AAA85;font-weight:600;white-space:nowrap;padding-top:2px}
+.proof-text{font-size:16px;font-weight:300;color:#D0C8B0;line-height:1.6}
+.proof-text strong{color:#F0E8D8}
+
+.scale-note{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.15em;color:#706848;font-style:italic;text-align:center;margin-top:8px;display:block}
+
+.sec-footer{display:flex;justify-content:space-between;margin-top:56px;padding-top:24px;border-top:0.5px solid rgba(200,168,112,0.15)}
+.nav-btn{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#A09070;background:none;border:0.5px solid rgba(200,168,112,0.25);padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none;transition:all 0.2s}
+.nav-btn:hover{color:#C8A870;border-color:rgba(200,168,112,0.6)}
+.nav-btn.next{background:rgba(200,168,112,0.08);color:#C8A870}
+.nav-btn.next:hover{background:rgba(200,168,112,0.18)}
+
+/* POPUP */
+#pp{display:none;position:fixed;background:#1E3452;border:0.5px solid rgba(200,168,112,0.55);border-radius:4px;padding:20px 22px;width:270px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+#pp.on{display:block}
+#pp-ey{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:6px}
+#pp-ti{font-size:17px;font-weight:400;color:#F0E8D8;margin-bottom:8px;line-height:1.3}
+#pp-bo{font-size:13px;font-weight:300;font-style:italic;line-height:1.6;color:#C8C0A8;margin-bottom:6px}
+#pp-fo{font-size:12px;color:#C8A870;background:rgba(200,168,112,0.1);padding:6px 10px;border-radius:2px;display:none}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+    <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html">A</a>
+    <a href="DFS_V14_section_A2.html">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html" class="active">B2</a>
+    <a href="DFS_V14_section_C_1.html">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html">G</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="eyebrow">Section B2</div>
+  <h1 class="sec-title">Score DFS du mail</h1>
+  <p class="sec-sub">L&rsquo;invisible rendu visible et quantifiable &mdash; Application de la formule au cas R1</p>
+
+  <div class="prose">
+
+    <h2>La formule DFS</h2>
+
+    <div style="display:flex;gap:16px;margin:32px 0;flex-wrap:wrap;align-items:center">
+      <div style="flex:1;min-width:220px;text-align:center;padding:24px 16px;border:1px solid rgba(200,168,112,0.25);border-radius:4px;background:rgba(200,168,112,0.03)">
+        <div style="font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#706040;margin-bottom:14px">Formule originale &mdash; Foucault (1851)</div>
+        <div>$$P_F = \frac{\pi^2}{6} \cdot \frac{e^2 \cdot B_{max}^2 \cdot f^2}{k \cdot \rho_r} \times V_f$$</div>
+        <div style="font-family:'Spectral',serif;font-size:9px;color:#706040;margin-top:12px;font-style:italic">Physique &eacute;lectromagn&eacute;tique</div>
+      </div>
+      <div style="text-align:center;color:#C8A870;font-size:28px;font-weight:300">&rarr;</div>
+      <div style="flex:1;min-width:220px;text-align:center;padding:24px 16px;border:1px solid rgba(200,168,112,0.5);border-radius:4px;background:rgba(200,168,112,0.07)">
+        <div style="font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:14px">Formule DFS &mdash; Adaptation sociale</div>
+        <div>$$P = \frac{e^2 \cdot B_{max}^2 \cdot f^2}{k \cdot \rho_r} \times V_f$$</div>
+        <div style="font-family:'Spectral',serif;font-size:9px;color:#907850;margin-top:12px;font-style:italic">Domaine psycholinguistique &mdash; V14</div>
+      </div>
+    </div>
+
+    <div class="cbox">
+      <div class="cbox-label">Pourquoi &pi;&sup2;/6 est retir&eacute;e dans l&rsquo;adaptation sociale</div>
+      <p>La constante &pi;&sup2;/6 est li&eacute;e &agrave; la g&eacute;om&eacute;trie physique des mat&eacute;riaux conducteurs &mdash; elle n&rsquo;a pas d&rsquo;&eacute;quivalent dans la mesure psycholinguistique. Le DFS conserve la <em>logique</em> de la formule de Foucault &mdash; l&rsquo;induction, la r&eacute;sistance, le volume expos&eacute; &mdash; tout en l&rsquo;adaptant rigoureusement au domaine social. Toute personne munie d&rsquo;une calculatrice peut v&eacute;rifier le score <strong style="color:#E8E0D0">P = 0.124</strong> avec les valeurs du tableau ci-dessous.</p>
+    </div>
+
+    <h2>Tableau des variables &mdash; Scoring du mail</h2>
+
+    <table class="vars-table">
+      <thead><tr><th>Symbole</th><th>Nom DFS</th><th>Score mail</th><th>Justification</th></tr></thead>
+      <tbody>
+        <tr class="result">
+          <td>P</td>
+          <td><span class="clink" data-key="P">Pression de stigmatisation</span></td>
+          <td><strong>0.618</strong></td>
+          <td>R&eacute;sultat final calcul&eacute; &mdash; 61.8% du maximum th&eacute;orique</td>
+        </tr>
+        <tr>
+          <td>e</td>
+          <td><span class="clink" data-key="e">Épaisseur de la toile r&eacute;f&eacute;rentielle</span></td>
+          <td>0.90 &rarr; e&sup2;=0.81</td>
+          <td>5 murs institutionnels &eacute;rig&eacute;s en 8 lignes</td>
+        </tr>
+        <tr>
+          <td>Bmax</td>
+          <td><span class="clink" data-key="Bmax">Charge normative dominante</span></td>
+          <td>0.95 &rarr; Bmax&sup2;=0.90</td>
+          <td>Pic en L5 : exclusion institutionnelle absolue</td>
+        </tr>
+        <tr>
+          <td>f</td>
+          <td><span class="clink" data-key="f">Fr&eacute;quence d&rsquo;exposition</span></td>
+          <td>1.0 &rarr; f&sup2;=1.0</td>
+          <td>8 assertions normatives en 8 lignes &mdash; saturation totale</td>
+        </tr>
+        <tr>
+          <td>k</td>
+          <td><span class="clink" data-key="k">Contexte institutionnel</span></td>
+          <td>0.85</td>
+          <td>B&eacute;n&eacute;vole sans protection, d&eacute;pendance maximale</td>
+        </tr>
+        <tr>
+          <td>&rho;r</td>
+          <td><span class="clink" data-key="rho">R&eacute;sistance bin&ocirc;me Vs+As</span></td>
+          <td><strong>0.25</strong></td>
+          <td>R&eacute;sistance faible de R1 &mdash; b&eacute;n&eacute;vole sans contrat, sans syndicat, sans r&eacute;seau institutionnel</td>
+        </tr>
+        <tr>
+          <td>Vf</td>
+          <td><span class="clink" data-key="Vf">Volume social expos&eacute;</span></td>
+          <td>0.20</td>
+          <td>Cible directe R1 + t&eacute;moin CS en CC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Cartographie ligne par ligne</h2>
+
+    <table class="carto-table">
+      <thead><tr><th>Ligne</th><th>Forme de maltraitement</th><th>Variable</th><th>Bmax</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td><span class="clink" data-key="nondit">Non-dit stigmatisant</span></td><td>f, Bmax</td><td>0.40</td><td class="score-cell">0.151</td></tr>
+        <tr class="pic"><td>L2 ★</td><td><span class="clink" data-key="culp">Culpabilisation</span> + Infantilisation</td><td>f, Bmax</td><td>0.80</td><td class="score-cell high">0.602 PIC</td></tr>
+        <tr><td>L3</td><td>Bouclier bureaucratique + <span class="clink" data-key="sanction">Sanction de fait</span></td><td>f, Bmax, e</td><td>0.87</td><td class="score-cell">0.349</td></tr>
+        <tr><td>L4</td><td>Infantilisation + Camouflage + <span class="clink" data-key="spr">Petit-roi</span></td><td>f, Bmax, e</td><td>0.90</td><td class="score-cell">0.488</td></tr>
+        <tr><td>L5</td><td><span class="clink" data-key="exclusion">Exclusion institutionnelle</span></td><td>f, Bmax</td><td>0.78</td><td class="score-cell">0.573</td></tr>
+        <tr><td>L6</td><td>Aum&ocirc;ne rh&eacute;torique maladroite</td><td>f, Bmax</td><td>0.65</td><td class="score-cell">0.398</td></tr>
+        <tr><td>L7</td><td>Bouclier bureaucratique vide</td><td>f, Bmax, e</td><td>0.58</td><td class="score-cell">0.229</td></tr>
+        <tr><td>L8</td><td>Fausse bienveillance + <span class="clink" data-key="clois">Cloisonnement</span></td><td>f, Bmax, e</td><td>0.48</td><td class="score-cell">0.176</td></tr>
+      </tbody>
+    </table>
+
+    <div class="score-block">
+      <div class="score-number">0.618</div>
+      <span class="score-label">Pression de stigmatisation mesur&eacute;e</span>
+      <div class="score-calc">P = (0.90&sup2; &times; 0.90&sup2; &times; 1.0&sup2;) / (0.85 &times; 0.25) &times; 0.20 = <strong style="color:#C8A870">0.618</strong> &mdash; 61.8% du maximum th&eacute;orique</div>
+    </div>
+
+    <span class="scale-note">Note sur la scalabilit&eacute; : quand Vf est &eacute;tendu &agrave; la population syst&eacute;mique &mdash; tous les b&eacute;n&eacute;voles dans des positions similaires &agrave; travers les institutions fran&ccedil;aises &mdash; P &eacute;volue lin&eacute;airement et le r&eacute;sultat devient politiquement et juridiquement significatif.</span>
+
+    <h2>Les trois faits &agrave; valeur probatoire</h2>
+
+    <div class="proof-box">
+      <div class="proof-label">Faits &eacute;tablis par le score DFS</div>
+      <div class="proof-item">
+        <span class="proof-num">01</span>
+        <p class="proof-text"><strong>La stigmatisation &eacute;tait pr&eacute;sente</strong> &mdash; elle n&rsquo;est pas une interpr&eacute;tation subjective de R1 mais un fait mesurable et calculable.</p>
+      </div>
+      <div class="proof-item">
+        <span class="proof-num">02</span>
+        <p class="proof-text"><strong>Elle &eacute;tait structurelle</strong> &mdash; elle a op&eacute;r&eacute; simultan&eacute;ment sur cinq variables ind&eacute;pendantes, ce qui exclut la co&iuml;ncidence.</p>
+      </div>
+      <div class="proof-item">
+        <span class="proof-num">03</span>
+        <p class="proof-text"><strong>Le silence complice est rompu</strong> &mdash; le DFS transforme ce que l&rsquo;on ressentait intuitivement en connaissance v&eacute;rifiable et citable devant un tribunal.</p>
+      </div>
+    </div>
+
+  </div>
+
+    <div class="sec-footer">
+    <a href="DFS_V14_section_B_4.html" class="nav-btn">&larr; Section B</a>
+    <a href="DFS_V14_section_C_1.html" class="nav-btn next">Section C &rarr;</a>
+  </div>
+</div>
+
+<div id="pp">
+  <div id="pp-ey"></div>
+  <div id="pp-ti"></div>
+  <div id="pp-bo"></div>
+  <div id="pp-fo"></div>
+</div>
+
+<script>
+var D = {
+  foucault:{ey:"Fondement physique",ti:"Les courants de Foucault",bo:"Découverts par Jean Bernard Léon Foucault en 1851. Des courants électriques induits dans un matériau conducteur soumis à un champ magnétique variable — produisant des pertes d'énergie sous forme de chaleur. Le DFS transpose cette logique au domaine social.",fo:"π²/6 — constante physique préservée dans la formule"},
+  P:{ey:"Résultat de la formule",ti:"P — Pression de stigmatisation",bo:"Mesure l'intensité du mépris et de la déshumanisation. Analogue aux pertes par courants de Foucault — la chaleur invisible produite dans le matériau social. Plus P est élevé, plus la cible subit une pression destructrice.",fo:"P = 0.124 pour le mail R1 — 12.4% du maximum"},
+  e:{ey:"Variable e",ti:"Épaisseur de la toile référentielle",bo:"Densité et cumul des présupposés, non-dits et cadrages qui enferment la cible. Chaque mur institutionnel (procédure, règle, hiérarchie) ajoute à l'épaisseur. 5 murs en 8 lignes = e très élevé.",fo:"e = 0.90 → e² = 0.81"},
+  Bmax:{ey:"Variable Bmax",ti:"Charge normative dominante",bo:"Force de la norme posée comme évidence naturelle. Déterminée par la Question Cruciale VIP et mesurée par le baromètre ligne par ligne. Le pic en L5 (exclusion institutionnelle) donne Bmax = 0.95.",fo:"Bmax = 0.95 → Bmax² = 0.90"},
+  f:{ey:"Variable f",ti:"Fréquence d'exposition",bo:"Répétition et matraquage du cadre stigmatisant. 8 assertions normatives en 8 lignes = saturation totale, f = 1.0. Plus f est élevée, plus l'induction stigmatisante est forte.",fo:"f = 1.0 → f² = 1.0 — saturation complète"},
+  k:{ey:"Variable k",ti:"Contexte institutionnel",bo:"Cadre qui amplifie ou réduit la dévalorisation. k=1 : autorité forte sur cible sans ressources. k>1 : parole sans pouvoir face à institution. Ici R1 est bénévole sans protection contractuelle.",fo:"k = 0.85 — dépendance maximale de R1"},
+  rho:{ey:"Variable ρr",ti:"Résistance du binôme Vs+As",bo:"Capacité de Vs à résister : capital social, contre-discours, fierté identitaire, réseau de soutien. Plus ρr est élevé, moins P pénètre. À définir précisément pour R1.",fo:"Au dénominateur — augmenter ρr réduit P"},
+  Vf:{ey:"Variable Vf",ti:"Volume social exposé",bo:"Portée et audience du discours. Nombre de personnes directement touchées plus amplification par témoins. Ici : R1 (cible directe) + CS (témoin en CC). Vf augmente si le mail est transmis.",fo:"Vf = 0.20 — impact limité mais réel"},
+  culp:{ey:"Forme #1",ti:"Culpabilisation",bo:"Rendre la victime responsable de la situation qui lui a nui. En L1 et L2 : 'tu n'as pas souhaité', 'tu n'aurais pas eu besoin' — la responsabilité est retournée contre R1.",fo:"Bmax indicatif : 0.85"},
+  spr:{ey:"Forme #6",ti:"Syndrome du petit roi (SPR)",bo:"Une personne embauchée pour servir qui transforme son rôle en autorité personnelle, se servant du règlement comme d'un drapeau et de l'organigramme comme d'un bouclier. Présent en L3-L6.",fo:"Variable k — contexte institutionnel"},
+  exclusion:{ey:"Forme #4 — PIC",ti:"Exclusion institutionnelle",bo:"Invoquer le statut d'appartenance pour nier une réclamation légitime. L5 : 'Puisque tu n'es plus membre de LP' — l'exclusion est présentée comme une évidence naturelle, non comme un choix.",fo:"Bmax = 0.95 — point le plus haut du mail"},
+  sanction:{ey:"Concept juridique",ti:"La Sanction de fait",bo:"Punition réelle infligée sans acte officiel. R1 avance les frais de sa poche et P1 utilise la bureaucratie pour retarder ou éviter le remboursement. L'institution censée défendre les précaires devient leur oppresseur.",fo:"Nouvelle catégorie juridique fondée par le DFS"},
+  clois:{ey:"Forme #8",ti:"Cloisonnement",bo:"Disperser la responsabilité entre services pour rendre l'imputabilité impossible. En L8 : comptabilité, décisionnaire, procédure. Chaque renvoi est une unité de cloisonnement mesurée par la variable e.",fo:"e = 0.90 — 5 murs institutionnels"}
+};
+
+var pp=document.getElementById('pp'),tm=null;
+function show(el,key){
+  if(tm){clearTimeout(tm);tm=null;}
+  var d=D[key];if(!d)return;
+  document.getElementById('pp-ey').textContent=d.ey;
+  document.getElementById('pp-ti').textContent=d.ti;
+  document.getElementById('pp-bo').textContent=d.bo;
+  var fo=document.getElementById('pp-fo');
+  if(d.fo){fo.innerHTML=d.fo;fo.style.display='block';if(window.MathJax)MathJax.typesetPromise([fo]);}else{fo.style.display='none';}
+  pp.style.visibility='hidden';
+  pp.style.left='0px';
+  pp.style.top='-9999px';
+  pp.className='on';
+  var r=el.getBoundingClientRect();
+  var ppW=pp.offsetWidth||270;
+  var ppH=pp.offsetHeight||200;
+  pp.className='';
+  pp.style.visibility='';
+  var left=r.right+12;
+  if(left+ppW>window.innerWidth-8){left=r.left-ppW-12;}
+  if(left<8){left=8;}
+  var top=r.top;
+  if(top+ppH>window.innerHeight-8){top=r.bottom-ppH;}
+  if(top<8){top=8;}
+  pp.style.left=left+'px';
+  pp.style.top=top+'px';
+  pp.className='on';
+}
+function hide(){tm=setTimeout(function(){pp.className='';},250);}
+document.querySelectorAll('.clink').forEach(function(el){
+  el.addEventListener('mouseover',function(){show(el,el.dataset.key);});
+  el.addEventListener('mouseout',hide);
+  el.addEventListener('click',function(e){e.preventDefault();if(pp.className==='on'&&pp._key===el.dataset.key){hide();}else{pp._key=el.dataset.key;show(el,el.dataset.key);}});
+});
+pp.addEventListener('mouseover',function(){if(tm){clearTimeout(tm);tm=null;}});
+pp.addEventListener('mouseout',hide);
+</script>
+</body>
+</html>

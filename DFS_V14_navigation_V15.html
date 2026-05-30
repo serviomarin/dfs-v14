@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 — Navigation</title>
+<!-- MathJax for LaTeX formula rendering -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: #0A1628;
+    color: #E8E0D0;
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-size: 18px; /* BASE FONT SIZE INCREASED */
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-bottom: 0.5px solid rgba(200,168,112,0.2);
+    position: sticky;
+    top: 0;
+    background: rgba(10,22,40,0.97);
+    z-index: 50;
+    margin: -40px -20px 40px;
+  }
+  .topbar-left {
+    font-family: 'Spectral', serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A870;
+  }
+  .topbar-nav {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .topbar-nav a {
+    font-family: 'Spectral', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #C8A870;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .topbar-nav a:hover { color: #FFF; }
+
+  /* ── VIP SCREEN ── */
+  #vip-screen { max-width: 680px; margin: 0 auto; padding: 50px 20px; text-align: center; }
+
+  .vip-label {
+    font-family: 'Spectral', serif;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 36px;
+    display: block;
+  }
+  .vip-question {
+    font-size: 22px; /* INCREASED */
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.75;
+    color: #D8CEB8;
+    margin-bottom: 40px;
+  }
+  .vip-question strong {
+    font-style: normal;
+    font-weight: 600;
+    color: #FFFFFF;
+    display: block;
+    margin-top: 18px;
+    font-size: 24px; /* INCREASED */
+  }
+  .vip-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .vip-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; /* INCREASED */
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 14px 32px;
+    border: 1.5px solid #C8A870;
+    background: rgba(200,168,112,0.1);
+    color: #C8A870;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .vip-btn:hover { background: rgba(200,168,112,0.25); color: #FFF; border-color: #FFF; }
+  .vip-btn.oui { border-color: #6AAA85; color: #6AAA85; background: rgba(106,170,133,0.1); }
+  .vip-btn.oui:hover { background: rgba(106,170,133,0.25); color: #FFF; border-color: #FFF; }
+  .vip-btn.non { border-color: #AA6A6A; color: #AA6A6A; background: rgba(170,106,106,0.1); }
+  .vip-btn.non:hover { background: rgba(170,106,106,0.25); color: #FFF; border-color: #FFF; }
+
+  .response-box {
+    display: none;
+    background: rgba(200,168,112,0.07);
+    border: 1px solid rgba(200,168,112,0.3);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 26px;
+    text-align: left;
+  }
+  .response-box.visible { display: block; }
+  .response-tag {
+    font-family: 'Spectral', serif;
+    font-size: 12px; /* INCREASED */
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .response-tag.oui { color: #6AAA85; }
+  .response-tag.non { color: #AA6A6A; }
+  .response-tag.sais-pas { color: #C8A870; }
+  .response-text {
+    font-size: 19px; /* INCREASED */
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.75;
+    color: #E8E0D0;
+  }
+  .retry-btn {
+    font-family: 'Spectral', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #806848;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-top: 16px;
+    display: block;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .retry-btn:hover { color: #C8A870; }
+
+  .enter-btn {
+    display: none;
+    font-family: 'Spectral', serif;
+    font-size: 14px; /* INCREASED */
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #0A1628;
+    background: #C8A870;
+    border: none;
+    padding: 16px 40px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .enter-btn:hover { background: #E8C890; }
+  .enter-btn.visible { display: inline-block; }
+
+  /* ── WEB SCREEN ── */
+  #web-screen { display: none; max-width: 760px; margin: 0 auto; padding: 20px; }
+  #web-screen.visible { display: block; }
+
+  .back-btn {
+    font-family: 'Spectral', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #806848;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 28px;
+    display: block;
+  }
+  .back-btn:hover { color: #C8A870; }
+
+  .web-header { text-align: center; margin-bottom: 32px; }
+  .web-title {
+    font-family: 'Spectral', serif;
+    font-size: 14px; /* INCREASED */
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 8px;
+  }
+  .web-hint {
+    font-size: 16px; /* INCREASED */
+    font-style: italic;
+    font-weight: 300;
+    color: #907850;
+  }
+
+  /* ── FORMULA CARD ── */
+  .dfs-card {
+    background: rgba(200,168,112,0.08);
+    border: 1px solid rgba(200,168,112,0.4);
+    border-radius: 4px;
+    padding: 24px 28px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: default;
+  }
+  .dfs-card-label {
+    font-family: 'Spectral', serif;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 14px;
+  }
+  .dfs-formula-latex {
+    font-size: 20px;
+    color: #E8E0D0;
+    margin: 10px 0 8px;
+    overflow-x: auto;
+  }
+  .dfs-formula-hint {
+    font-family: 'Spectral', serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #806848;
+    margin-top: 6px;
+    cursor: pointer;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+  }
+  .dfs-formula-hint:hover { color: #C8A870; }
+  .dfs-card-sub {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 300;
+    color: #907850;
+    margin-top: 10px;
+  }
+
+  /* ── TRANSPOSITION INTRO BLOCK ── */
+  .transposition-block {
+    background: rgba(200,168,112,0.04);
+    border-left: 2px solid #C8A870;
+    border-radius: 0 4px 4px 0;
+    padding: 24px 28px;
+    margin: 20px 0 24px;
+  }
+  .transposition-key {
+    font-size: 20px;
+    font-weight: 600;
+    font-style: italic;
+    color: #E8E0D0;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .transposition-key em {
+    color: #C8A870;
+    font-style: normal;
+  }
+  .transposition-body {
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.85;
+    color: #D0C8B8;
+    margin-bottom: 14px;
+  }
+  .transposition-cta {
+    font-family: 'Spectral', serif;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #C8A870;
+    text-align: center;
+    margin-top: 16px;
+  }
+  .diagram-container {
+    margin: 0 0 28px;
+    border: 0.5px solid rgba(200,168,112,0.18);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ── VARIABLE POPUP (diagram) ── */
+  .var-popup {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0F1E32;
+    border: 1px solid rgba(200,168,112,0.55);
+    border-radius: 8px;
+    padding: 24px 28px;
+    width: min(480px, 92vw);
+    max-height: 82vh;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+  .var-popup.on { display: block; }
+  .vp-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 998;
+  }
+  .vp-overlay.on { display: block; }
+  .vp-close {
+    position: absolute; top: 12px; right: 16px;
+    font-family: 'Spectral', serif;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #806848; background: none; border: none; cursor: pointer;
+  }
+  .vp-close:hover { color: #C8A870; }
+  .vp-symbol { font-size: 32px; font-weight: 300; color: #C8A870; margin-bottom: 4px; }
+  .vp-name { font-size: 18px; color: #E8E0D0; margin-bottom: 20px; font-weight: 400; line-height: 1.3; }
+  .vp-block { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 0.5px solid rgba(200,168,112,0.12); }
+  .vp-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .vp-label {
+    font-family: 'Spectral', serif;
+    font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: #C8A870; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .vp-label::after { content: ''; flex: 1; height: 0.5px; background: rgba(200,168,112,0.2); }
+  .vp-text { font-size: 16px; font-weight: 300; font-style: italic; line-height: 1.8; color: #D0C8B8; }
+  .vp-bridge {
+    background: rgba(200,168,112,0.07);
+    border-left: 2px solid #C8A870;
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    font-size: 15px; font-style: italic; color: #C8A870; line-height: 1.7;
+  }
+
+  /* ── SECTIONS GRID ── */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+  }
+  .section-card {
+    background: rgba(200,168,112,0.05);
+    border: 0.5px solid rgba(200,168,112,0.22);
+    border-radius: 4px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+  .section-card:hover {
+    background: rgba(200,168,112,0.13);
+    border-color: rgba(200,168,112,0.55);
+    transform: translateY(-2px);
+  }
+  .card-code {
+    font-family: 'Spectral', serif;
+    font-size: 11px; /* INCREASED */
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 7px;
+  }
+  .card-title {
+    font-size: 17px; /* INCREASED */
+    font-weight: 400;
+    color: #E8E0D0;
+    margin-bottom: 7px;
+    line-height: 1.4;
+  }
+  .card-sub {
+    font-size: 14px; /* INCREASED */
+    font-style: italic;
+    font-weight: 300;
+    color: #907850;
+    line-height: 1.5;
+  }
+  .card-tags { margin-top: 11px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .card-tag {
+    font-family: 'Spectral', serif;
+    font-size: 10px; /* INCREASED */
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #706040;
+    border: 0.5px solid rgba(200,168,112,0.18);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  /* ── FORMULA EDUCATIONAL POPUP ── */
+  #fo-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0F1E32;
+    border: 1px solid rgba(200,168,112,0.5);
+    border-radius: 6px;
+    padding: 32px 36px;
+    width: min(680px, 92vw);
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 300;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  #fo-popup.on { display: block; }
+  #fo-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 299;
+  }
+  #fo-overlay.on { display: block; }
+  .fo-close {
+    position: absolute;
+    top: 14px; right: 18px;
+    font-family: 'Spectral', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #806848;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .fo-close:hover { color: #C8A870; }
+
+  .fo-eyebrow {
+    font-family: 'Spectral', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 6px;
+  }
+  .fo-title {
+    font-size: 26px;
+    font-weight: 300;
+    color: #E8E0D0;
+    margin-bottom: 24px;
+    line-height: 1.25;
+  }
+  .fo-section {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 0.5px solid rgba(200,168,112,0.12);
+  }
+  .fo-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .fo-section-label {
+    font-family: 'Spectral', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A870;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fo-section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: rgba(200,168,112,0.2);
+  }
+  .fo-text {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #D0C8B8;
+    margin-bottom: 12px;
+  }
+  .fo-formula-box {
+    background: rgba(200,168,112,0.06);
+    border: 0.5px solid rgba(200,168,112,0.3);
+    border-radius: 4px;
+    padding: 16px 20px;
+    text-align: center;
+    margin: 16px 0;
+    font-size: 18px;
+    color: #E8E0D0;
+    overflow-x: auto;
+  }
+  .fo-formula-label {
+    font-family: 'Spectral', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #806848;
+    margin-bottom: 8px;
+  }
+  .fo-side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .fo-formula-col {
+    background: rgba(200,168,112,0.06);
+    border: 0.5px solid rgba(200,168,112,0.25);
+    border-radius: 4px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .fo-formula-col .fo-formula-label { margin-bottom: 10px; }
+  .fo-highlight {
+    font-style: italic;
+    color: #C8A870;
+    font-weight: 400;
+  }
+  .fo-key { color: #C8A870; font-weight: 600; }
+  @media (max-width: 520px) {
+    .fo-side-by-side { grid-template-columns: 1fr; }
+    #fo-popup { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR — fixed navigation -->
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+  <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html">A</a>
+    <a href="DFS_V14_section_A2.html">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html">B2</a>
+    <a href="DFS_V14_section_C_1.html">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html">G</a>
+  </div>
+</nav>
+
+<!-- VIP QUESTION SCREEN -->
+<div id="vip-screen">
+  <span class="vip-label">DÉTECTEUR FOUCALDIEN DE STIGMATISATION (DFS) — Question préliminaire</span>
+  <p class="vip-question">
+    Pensez à la dernière communication administrative que vous avez reçue.
+    <strong>Cette lettre aurait-elle été écrite de la même façon si vous étiez une personne VIP ?</strong>
+  </p>
+  <div class="vip-buttons">
+    <button class="vip-btn oui" onclick="repondre('oui')">OUI</button>
+    <button class="vip-btn non" onclick="repondre('non')">NON</button>
+    <button class="vip-btn sais-pas" onclick="repondre('sais-pas')">JE NE SAIS PAS</button>
+  </div>
+  <div class="response-box" id="response-box">
+    <span class="response-tag" id="response-tag"></span>
+    <p class="response-text" id="response-text"></p>
+    <button class="retry-btn" onclick="resetVip()">← Changer ma réponse</button>
+  </div>
+  <button class="enter-btn" id="enter-btn" onclick="entrer()">Entrer dans le document →</button>
+</div>
+
+<!-- TABLE OF CONTENTS SCREEN -->
+<div id="web-screen">
+  <button class="back-btn" onclick="retour()">← Revenir à la question</button>
+  <div class="web-header">
+    <div class="web-title">Table des matières</div>
+    <div class="web-hint">Cliquez sur une section pour y accéder</div>
+  </div>
+
+  <!-- FORMULA CARD — with educational popup trigger -->
+  <div class="dfs-card">
+    <div class="dfs-card-label">Formule centrale — Détecteur Foucaldien de Stigmatisation</div>
+
+    <!-- Original Foucault formula (FO) with π²/6 and Vf -->
+    <div class="fo-formula-label" style="text-align:center; margin-bottom:6px;">Formule originale de Foucault (FO)</div>
+    <div class="dfs-formula-latex">
+      \[ P = \frac{\pi^2 \cdot e^2 \cdot B_{\max}^2 \cdot f^2}{6 \cdot k \cdot \rho_r} \times V_f \]
+    </div>
+
+    <div class="dfs-formula-hint" onclick="ouvrirFO()">
+      ▸ Qu'est-ce que cette formule ? Comment fonctionne-t-elle ? Comment l'avons-nous adaptée ?
+    </div>
+    <div class="dfs-card-sub">Adapté de la formule des courants de Foucault — Jean Bernard Léon Foucault, physicien (1819–1868)</div>
+  </div>
+
+  <!-- ══ TRANSPOSITION INTRO + INTERACTIVE DIAGRAM ══ -->
+  <div class="transposition-block">
+    <div class="transposition-key">
+      La formule de Foucault mesure <em>une perte</em>.<br>
+      Le DFS mesure <em>une perte</em>.<br>
+      C'est aussi simple que cela.
+    </div>
+    <p class="transposition-body">
+      Le DFS n'est pas une métaphore vaguement empruntée à la physique. C'est une transposition rigoureuse — et la raison en est simple : la formule de Foucault mesure une perte de chaleur, et c'est précisément ce que nous cherchons à mesurer avec le DFS : la perte d'humanité infligée par la stigmatisation.
+    </p>
+    <p class="transposition-body">
+      Un seul concept — la perte — traverse les deux domaines sans trahison. Ce n'est pas une analogie poétique : c'est une identité fonctionnelle. Chaque variable de la formule originale possède un équivalent social précis et justifié, parce que le phénomène mesuré est structurellement le même.
+    </p>
+    <p class="transposition-body">
+      Le diagramme ci-dessous en est la preuve visuelle. Avant même d'ouvrir un seul popup, le lecteur voit que rien n'a été laissé au hasard — chaque variable a traversé le même processus de transduction : de la physique électromagnétique au domaine psychosocial, avec une justification à chaque étape.
+    </p>
+    <div class="transposition-cta">▸ Cliquez sur chaque variable pour voir comment</div>
+  </div>
+
+  <!-- OVERLAY + POPUP for diagram variables -->
+  <div class="vp-overlay" id="vp-overlay" onclick="closeVarPopup()"></div>
+  <div class="var-popup" id="vp">
+    <button class="vp-close" onclick="closeVarPopup()">✕ fermer</button>
+    <div class="vp-symbol" id="vp-symbol"></div>
+    <div class="vp-name" id="vp-name"></div>
+    <div class="vp-block">
+      <div class="vp-label">En physique électromagnétique</div>
+      <div class="vp-text" id="vp-physics"></div>
+    </div>
+    <div class="vp-block">
+      <div class="vp-label">Notre adaptation sociale</div>
+      <div class="vp-text" id="vp-social"></div>
+    </div>
+    <div class="vp-block">
+      <div class="vp-label">Pourquoi cette analogie tient</div>
+      <div class="vp-bridge" id="vp-bridge"></div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE DIAGRAM -->
+  <div class="diagram-container">
+  <svg width="100%" viewBox="0 0 680 520" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>DFS comme fonction — variables interactives</title>
+  <desc>Cliquez sur chaque variable pour comprendre son sens physique et son adaptation sociale.</desc>
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#C8A870" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    .dg-node { cursor: pointer; }
+    .dg-node rect { transition: opacity 0.15s; }
+    .dg-node:hover rect { opacity: 0.8; }
+    .dg-th { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 15px; font-weight: 600; fill: #E8E0D0; }
+    .dg-ts { font-family: 'Spectral', serif; font-size: 12px; fill: #C8B078; }
+    .dg-tg { font-family: 'Spectral', serif; font-size: 11px; fill: #C8A870; }
+    .dg-arr { fill: none; stroke: rgba(200,168,112,0.35); stroke-width: 0.8; }
+    .dg-arr-ks { fill: none; stroke: #BA7517; stroke-width: 1.2; opacity: 0.6; }
+  </style>
+
+  <!-- TITLE -->
+  <text font-family="'Spectral',serif" font-size="12" letter-spacing="3" fill="#C8A870" x="340" y="28" text-anchor="middle">DFS — TRANSPOSITION RIGOUREUSE</text>
+  <text font-family="'Cormorant Garamond',Georgia,serif" font-size="14" fill="#B09060" font-style="italic" x="340" y="48" text-anchor="middle">Cliquez sur chaque variable</text>
+
+  <!-- e -->
+  <g class="dg-node" onclick="openVarPopup('e')">
+    <rect x="20" y="72" width="150" height="48" rx="6" fill="rgba(79,65,153,0.25)" stroke="#7F77DD" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="93" text-anchor="middle">e</text>
+    <text class="dg-ts" x="95" y="111" text-anchor="middle">Épaisseur du discours</text>
+  </g>
+  <!-- Bmax -->
+  <g class="dg-node" onclick="openVarPopup('bmax')">
+    <rect x="20" y="134" width="150" height="48" rx="6" fill="rgba(79,65,153,0.25)" stroke="#7F77DD" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="155" text-anchor="middle">B max</text>
+    <text class="dg-ts" x="95" y="173" text-anchor="middle">Charge normative</text>
+  </g>
+  <!-- f -->
+  <g class="dg-node" onclick="openVarPopup('f')">
+    <rect x="20" y="196" width="150" height="48" rx="6" fill="rgba(79,65,153,0.25)" stroke="#7F77DD" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="217" text-anchor="middle">f</text>
+    <text class="dg-ts" x="95" y="235" text-anchor="middle">Fréquence d'exposition</text>
+  </g>
+  <!-- k -->
+  <g class="dg-node" onclick="openVarPopup('k')">
+    <rect x="20" y="258" width="150" height="48" rx="6" fill="rgba(13,110,86,0.25)" stroke="#1D9E75" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="279" text-anchor="middle">k</text>
+    <text class="dg-ts" x="95" y="297" text-anchor="middle">Contexte institutionnel</text>
+  </g>
+  <!-- ρr -->
+  <g class="dg-node" onclick="openVarPopup('rho')">
+    <rect x="20" y="320" width="150" height="48" rx="6" fill="rgba(13,110,86,0.25)" stroke="#1D9E75" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="341" text-anchor="middle">ρr</text>
+    <text class="dg-ts" x="95" y="359" text-anchor="middle">Résistance Vs + As</text>
+  </g>
+  <!-- Vf -->
+  <g class="dg-node" onclick="openVarPopup('vf')">
+    <rect x="20" y="382" width="150" height="48" rx="6" fill="rgba(152,58,24,0.25)" stroke="#D85A30" stroke-width="0.5"/>
+    <text class="dg-th" x="95" y="403" text-anchor="middle">Vf</text>
+    <text class="dg-ts" x="95" y="421" text-anchor="middle">Volume social exposé</text>
+  </g>
+  <!-- ks -->
+  <g class="dg-node" onclick="openVarPopup('ks')">
+    <rect x="20" y="444" width="150" height="56" rx="6" fill="rgba(186,117,23,0.2)" stroke="#BA7517" stroke-width="0.8"/>
+    <text class="dg-th" x="95" y="464" text-anchor="middle">ks</text>
+    <text class="dg-ts" x="95" y="481" text-anchor="middle">Silence complice</text>
+    <text class="dg-ts" x="95" y="495" text-anchor="middle">Sédiment historique</text>
+  </g>
+  <text class="dg-tg" x="199" y="440" text-anchor="middle">amplificateur</text>
+
+  <!-- ARROWS -->
+  <path class="dg-arr" d="M170 96 L232 96 L232 280 L268 280" marker-end="url(#arr2)"/>
+  <path class="dg-arr" d="M170 158 L228 158 L228 280 L268 280" marker-end="url(#arr2)"/>
+  <path class="dg-arr" d="M170 220 L224 220 L224 280 L268 280" marker-end="url(#arr2)"/>
+  <path class="dg-arr" d="M170 282 L224 282 L224 280 L268 280" marker-end="url(#arr2)"/>
+  <path class="dg-arr" d="M170 344 L224 344 L224 282 L268 282" marker-end="url(#arr2)"/>
+  <path class="dg-arr" d="M170 406 L228 406 L228 284 L268 284" marker-end="url(#arr2)"/>
+  <path class="dg-arr-ks" d="M170 472 L232 472 L232 292 L268 292" marker-end="url(#arr2)"/>
+
+  <!-- FORMULA BOX -->
+  <g class="dg-node" onclick="openVarPopup('formula')">
+    <rect x="268" y="200" width="172" height="160" rx="10" fill="rgba(200,168,112,0.08)" stroke="rgba(200,168,112,0.4)" stroke-width="1"/>
+    <text font-family="'Spectral',serif" font-size="13" font-weight="600" fill="#C8A870" x="354" y="228" text-anchor="middle">DFS</text>
+    <text class="dg-ts" x="354" y="245" text-anchor="middle">Détecteur Foucaldien</text>
+    <text class="dg-ts" x="354" y="261" text-anchor="middle">de Stigmatisation</text>
+    <line x1="288" y1="272" x2="420" y2="272" stroke="rgba(200,168,112,0.2)" stroke-width="0.5"/>
+    <text class="dg-ts" x="354" y="292" text-anchor="middle">P = e²·Bmax²·f²</text>
+    <text class="dg-ts" x="354" y="308" text-anchor="middle">──────────────</text>
+    <text class="dg-ts" x="354" y="324" text-anchor="middle">k · ρr</text>
+    <text class="dg-ts" x="354" y="343" text-anchor="middle">× Vf</text>
+  </g>
+
+  <!-- OUTPUT ARROW -->
+  <line x1="440" y1="280" x2="512" y2="280" stroke="#C8A870" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- P OUTPUT -->
+  <g class="dg-node" onclick="openVarPopup('p')">
+    <rect x="512" y="228" width="148" height="104" rx="8" fill="rgba(152,58,24,0.2)" stroke="#D85A30" stroke-width="1"/>
+    <text class="dg-th" x="586" y="258" text-anchor="middle">P</text>
+    <text class="dg-ts" x="586" y="278" text-anchor="middle">Perte d'humanité</text>
+    <text class="dg-ts" x="586" y="295" text-anchor="middle">mesurée · visible</text>
+    <text class="dg-ts" x="586" y="312" text-anchor="middle">juridiquement</text>
+  </g>
+  </svg>
+  </div>
+
+  <!-- SECTION CARDS — all links now point to correct HTML files -->
+  <div class="sections-grid">
+    <a class="section-card" href="DFS_V14_section_A_3.html">
+      <div class="card-code">Section A</div>
+      <div class="card-title">Le rôle fédérateur de la stigmatisation</div>
+      <div class="card-sub">Silence complice · Discours référentiel · ks</div>
+      <div class="card-tags"><span class="card-tag">Théorie</span><span class="card-tag">Foucauldien</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_A2.html">
+      <div class="card-code">Section A2</div>
+      <div class="card-title">St et le langage corporel</div>
+      <div class="card-sub">Escamoteada · Le regard · Hors d'atteinte</div>
+      <div class="card-tags"><span class="card-tag">Nouveau</span><span class="card-tag">Non verbal</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_B_4.html">
+      <div class="card-code">Section B</div>
+      <div class="card-title">Analyse psycholinguistique du mail</div>
+      <div class="card-sub">Baromètre · Non-dit · Syndrome du petit roi</div>
+      <div class="card-tags"><span class="card-tag">Linguistique</span><span class="card-tag">Cas concret</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_B2_1.html">
+      <div class="card-code">Section B2</div>
+      <div class="card-title">Score DFS — L'invisible rendu visible</div>
+      <div class="card-sub">Ps = 0.124 · 3 faits probatoires · Preuve</div>
+      <div class="card-tags"><span class="card-tag">Mathématique</span><span class="card-tag">Preuve</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_C_1.html">
+      <div class="card-code">Section C</div>
+      <div class="card-title">Le double tranchant — Vs + As</div>
+      <div class="card-sub">Négligence de pouvoir · Libération · SieM</div>
+      <div class="card-tags"><span class="card-tag">Psychosocial</span><span class="card-tag">Juridique</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_D_1.html">
+      <div class="card-code">Section D</div>
+      <div class="card-title">La formule DFS unifiée</div>
+      <div class="card-sub">7 variables · Baromètre · Condition Vf = 0</div>
+      <div class="card-tags"><span class="card-tag">Physique</span><span class="card-tag">Social</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_E_1.html">
+      <div class="card-code">Section E</div>
+      <div class="card-title">De la preuve à la loi</div>
+      <div class="card-sub">Radar · Dissuasion · Élévation · Législation</div>
+      <div class="card-tags"><span class="card-tag">Législatif</span><span class="card-tag">Conclusion</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_F_1.html">
+      <div class="card-code">Section F</div>
+      <div class="card-title">La Question Cruciale VIP</div>
+      <div class="card-sub">Test en 3 étapes · Algorithme · Dossier</div>
+      <div class="card-tags"><span class="card-tag">Instrument</span><span class="card-tag">Accessible</span></div>
+    </a>
+    <a class="section-card" href="DFS_V14_section_G_1.html">
+      <div class="card-code">Section G</div>
+      <div class="card-title">Glossaire des formes de maltraitement</div>
+      <div class="card-sub">10 formes · Valeurs Bmax · Calibration DFS</div>
+      <div class="card-tags"><span class="card-tag">Lexique</span><span class="card-tag">Opérationnel</span></div>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     EDUCATIONAL POPUP — La Formule de Foucault
+     ══════════════════════════════════════════════════════════════ -->
+<div id="fo-overlay" onclick="fermerFO()"></div>
+<div id="fo-popup" role="dialog" aria-modal="true">
+  <button class="fo-close" onclick="fermerFO()">✕ Fermer</button>
+
+  <div class="fo-eyebrow">Session éducative — Grand public</div>
+  <h2 class="fo-title">La formule de Foucault :<br>de la physique à la société</h2>
+
+  <!-- 1a. Comment fonctionne la formule -->
+  <div class="fo-section">
+    <div class="fo-section-label">1 · La physique — Qu'est-ce qu'un courant de Foucault ?</div>
+    <p class="fo-text">
+      Jean Bernard Léon Foucault (1819–1868) était un physicien français. En étudiant l'électromagnétisme, il a découvert un phénomène fascinant : quand un <span class="fo-highlight">champ magnétique variable</span> traverse un matériau conducteur (un métal, par exemple), il génère des <span class="fo-highlight">courants électriques circulaires</span> à l'intérieur de ce matériau — invisibles à l'œil nu.
+    </p>
+    <p class="fo-text">
+      Ces courants — appelés <em>courants de Foucault</em> — <strong>chauffent le matériau</strong> de l'intérieur. Ce n'est pas de la chaleur utile : c'est de l'énergie perdue, dissipée, qui s'échappe sous forme de chaleur sans servir à rien. C'est exactement ce phénomène que sa formule mesure.
+    </p>
+  </div>
+
+  <!-- 1b. La notion de perte — P -->
+  <div class="fo-section">
+    <div class="fo-section-label">2 · La variable P — Qu'est-ce qu'une « perte » ?</div>
+    <p class="fo-text">
+      Dans la formule, <span class="fo-key">P</span> représente la <strong>perte de chaleur</strong> — l'énergie qui disparaît, qui s'évapore, qui ne sert plus à rien de constructif.
+    </p>
+    <p class="fo-text">
+      Imaginez une bouilloire percée : vous chauffez l'eau, mais une partie de la chaleur s'échappe par les trous. <span class="fo-key">P</span>, c'est cette chaleur perdue. Plus <span class="fo-key">P</span> est grand, plus le matériau perd de l'énergie — plus il s'épuise, se dégrade, se vide.
+    </p>
+    <div class="fo-formula-box">
+      <div class="fo-formula-label">Formule originale de Foucault (FO) — avec π²/6</div>
+      \[ P = \frac{\pi^2 \cdot e^2 \cdot B_{\max}^2 \cdot f^2}{6 \cdot k \cdot \rho_r} \]
+    </div>
+    <p class="fo-text" style="font-size:15px; color:#907850;">
+      Les autres variables : <span class="fo-key">e</span> = épaisseur du matériau · <span class="fo-key">B<sub>max</sub></span> = intensité du champ magnétique · <span class="fo-key">f</span> = fréquence des oscillations · <span class="fo-key">k</span> = constante du matériau · <span class="fo-key">ρ<sub>r</sub></span> = résistivité (capacité à résister au courant)
+    </p>
+  </div>
+
+  <!-- 1c. Du physique au social -->
+  <div class="fo-section">
+    <div class="fo-section-label">3 · Du physique au social — Pourquoi cette formule ?</div>
+    <p class="fo-text">
+      Nous avons associé la notion physique de <span class="fo-highlight">perte de chaleur</span> à la notion psycho-socio-philosophique de <span class="fo-highlight">déhumanisation</span> — c'est-à-dire la perte de valeur humaine, la dévalorisation d'une personne.
+    </p>
+    <p class="fo-text">
+      Pourquoi cette décision ? Parce que la stigmatisation fonctionne <em>exactement</em> comme les courants de Foucault : invisible, silencieuse, elle traverse les institutions et les textes administratifs et <strong>fait perdre à la personne stigmatisée une partie de son humanité</strong> — son énergie, sa dignité, sa capacité à résister — sans que personne ne le voit ni ne l'admette.
+    </p>
+    <p class="fo-text" style="background: rgba(200,168,112,0.07); border-left: 2px solid #C8A870; padding: 14px 18px; border-radius: 2px;">
+      <strong>Affirmation directe :</strong> Cette formule <span class="fo-key">(FO)</span> mesure la perte de chaleur (représentée par la variable <span class="fo-key">P</span>). Nous avons adapté FO et l'avons utilisée pour calculer — avec le DFS — <strong>la perte d'humanité à niveau social</strong>, et la perte d'identité à niveau psychologique.
+    </p>
+  </div>
+
+  <!-- 1d + 1e. Les deux formules côte à côte -->
+  <div class="fo-section">
+    <div class="fo-section-label">4 · Les deux formules — Originale et adaptée</div>
+    <p class="fo-text">La formule DFS est une adaptation directe de FO. Le facteur <span class="fo-key">π²/6</span> — propre à la géométrie électromagnétique — est remplacé par les variables sociales qui mesurent la stigmatisation :</p>
+
+    <div class="fo-side-by-side">
+      <div class="fo-formula-col">
+        <div class="fo-formula-label">FO — Formule originale (Foucault, physique)</div>
+        \[ P = \frac{\pi^2 \cdot e^2 \cdot B_{\max}^2 \cdot f^2}{6 \cdot k \cdot \rho_r} \]
+      </div>
+      <div class="fo-formula-col">
+        <div class="fo-formula-label">FO adaptée — Formule DFS (social)</div>
+        \[ P = \frac{e^2 \cdot B_{\max}^2 \cdot f^2}{k \cdot \rho_r} \times V_f \]
+      </div>
+    </div>
+
+    <p class="fo-text" style="font-size:15px; color:#907850; margin-top:8px;">
+      Dans la formule DFS : <span class="fo-key">e</span> = épaisseur du discours référentiel · <span class="fo-key">B<sub>max</sub></span> = charge normative stigmatisante · <span class="fo-key">f</span> = fréquence d'exposition · <span class="fo-key">k</span> = contexte institutionnel · <span class="fo-key">ρ<sub>r</sub></span> = résistance des individus (Vs + As) · <span class="fo-key">V<sub>f</sub></span> = volume social exposé
+    </p>
+  </div>
+
+</div><!-- /fo-popup -->
+
+<script>
+/* ── VIP screen logic ── */
+const responses = {
+  oui: { tag: 'Votre réponse : OUI', cls: 'oui', text: "Bien. Mais lisez quand même — vous pourriez être surpris de ce que le DFS révèle dans des textes qui semblent parfaitement neutres." },
+  non: { tag: 'Votre réponse : NON', cls: 'non', text: "Vous venez de détecter la stigmatisation. Le DFS va maintenant vous montrer comment la mesurer, la démontrer, et la rendre juridiquement visible." },
+  'sais-pas': { tag: 'Votre réponse : Je ne sais pas', cls: 'sais-pas', text: "C'est exactement pour vous que ce document a été écrit. Le DFS transforme ce que l'on sent intuitivement en connaissance vérifiable." }
+};
+
+function repondre(choix) {
+  const r = responses[choix];
+  document.getElementById('response-tag').textContent = r.tag;
+  document.getElementById('response-tag').className = 'response-tag ' + r.cls;
+  document.getElementById('response-text').textContent = r.text;
+  document.getElementById('response-box').classList.add('visible');
+  document.getElementById('enter-btn').classList.add('visible');
+}
+function resetVip() {
+  document.getElementById('response-box').classList.remove('visible');
+  document.getElementById('enter-btn').classList.remove('visible');
+}
+function entrer() {
+  document.getElementById('vip-screen').style.display = 'none';
+  document.getElementById('web-screen').classList.add('visible');
+}
+function retour() {
+  document.getElementById('web-screen').classList.remove('visible');
+  document.getElementById('vip-screen').style.display = 'block';
+}
+
+/* ── Formula popup ── */
+function ouvrirFO() {
+  document.getElementById('fo-popup').classList.add('on');
+  document.getElementById('fo-overlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  // Re-typeset MathJax inside popup
+  if (window.MathJax) MathJax.typesetPromise([document.getElementById('fo-popup')]);
+}
+function fermerFO() {
+  document.getElementById('fo-popup').classList.remove('on');
+  document.getElementById('fo-overlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { fermerFO(); closeVarPopup(); }
+});
+
+/* ── Variable diagram popup ── */
+var VAR_DATA = {
+  e: {
+    symbol: "e",
+    name: "Épaisseur du matériau / Épaisseur du discours référentiel",
+    physics: "En physique, e mesure l'épaisseur du matériau conducteur traversé par le champ magnétique. Plus le matériau est épais, plus les courants de Foucault peuvent se développer en profondeur — et plus la perte de chaleur est grande. L'épaisseur apparaît au carré dans la formule : l'effet est exponentiel.",
+    social: "Dans le DFS, e mesure l'épaisseur du discours référentiel — la densité et la profondeur historique des préjugés partagés qui sous-tendent la communication stigmatisante. Un discours ancien, sédimenté, institutionnalisé a une grande épaisseur. Un préjugé récent ou superficiel en a peu.",
+    bridge: "Comme dans un métal épais, plus le discours est profond et dense, plus la stigmatisation peut s'y propager — et plus la perte d'humanité infligée est grande. L'effet est également exponentiel : doubler l'épaisseur du discours quadruple la perte."
+  },
+  bmax: {
+    symbol: "B max",
+    name: "Champ magnétique maximal / Charge normative stigmatisante",
+    physics: "Bmax est l'intensité maximale du champ magnétique qui traverse le matériau. C'est la force motrice du phénomène : sans champ magnétique, pas de courants de Foucault, pas de perte. Plus le champ est intense, plus les courants induits sont puissants.",
+    social: "Dans le DFS, Bmax représente la charge normative — l'intensité de la norme sociale qui s'exerce sur la personne stigmatisée. Une institution puissante (État, hôpital, école) exerce un champ normatif maximal. Un individu isolé en exerce un moindre. Bmax mesure le poids social de la source stigmatisante.",
+    bridge: "Comme le champ magnétique génère les courants qui brûlent le métal, la norme sociale génère la stigmatisation qui érode l'identité. L'autorité institutionnelle est le champ — invisible, mais dont les effets sont bien réels et mesurables."
+  },
+  f: {
+    symbol: "f",
+    name: "Fréquence des oscillations / Fréquence d'exposition à la stigmatisation",
+    physics: "f est la fréquence à laquelle le champ magnétique oscille. Un champ alternatif à haute fréquence génère beaucoup plus de courants de Foucault qu'un champ lent. La perte de chaleur croît avec le carré de la fréquence — une fréquence double produit quatre fois plus de perte.",
+    social: "Dans le DFS, f mesure la fréquence à laquelle la personne est exposée à la stigmatisation : combien de fois par jour, par semaine, par an reçoit-elle des communications dévalorisantes ? Un courrier isolé a peu d'effet. Une exposition répétée, chronique, systématique a un effet dévastateur.",
+    bridge: "Comme les oscillations répétées d'un champ magnétique chauffent progressivement un métal jusqu'à le détruire, les expositions répétées à la stigmatisation érodent progressivement l'identité et la santé psychologique — jusqu'à des dommages irréversibles."
+  },
+  k: {
+    symbol: "k",
+    name: "Constante du matériau / Contexte institutionnel",
+    physics: "k est une constante propre à chaque matériau conducteur — elle tient compte de la géométrie interne du matériau et de la façon dont il conduit l'électricité. Elle apparaît au dénominateur : un k élevé réduit les pertes. C'est une propriété structurelle, pas dynamique.",
+    social: "Dans le DFS, k représente le contexte institutionnel dans lequel la stigmatisation se produit. Une institution dotée de mécanismes de contrôle, de procédures de recours et de culture de la dignité a un k élevé — elle amortit naturellement la stigmatisation. Une institution opaque, hiérarchique, sans recours a un k faible — elle l'amplifie.",
+    bridge: "Comme certains matériaux résistent mieux aux courants de Foucault grâce à leur structure interne, certaines institutions résistent mieux à la stigmatisation grâce à leurs structures éthiques. k mesure cette capacité d'amortissement institutionnel."
+  },
+  rho: {
+    symbol: "ρr",
+    name: "Résistivité électrique / Résistance psychosociale de Vs et As",
+    physics: "ρr est la résistivité du matériau — sa capacité à s'opposer au passage des courants électriques. Un matériau très résistif dissipe moins d'énergie sous forme de chaleur. La résistivité apparaît au dénominateur : plus elle est grande, moins les pertes sont importantes.",
+    social: "Dans le DFS, ρr représente la résistance psychosociale combinée de <strong>Vs</strong> (la personne stigmatisée) et <strong>As</strong> (l'agent stigmatisant). <strong>Vs</strong> résiste par sa conscience, son soutien social, sa capacité à nommer ce qu'il subit. <strong>As</strong> résiste par son propre questionnement, sa formation, son empathie. Un ρr élevé amortit la perte.",
+    bridge: "Comme un métal résistif s'échauffe moins, une personne dotée de ressources psychosociales — soutien, éducation, conscience critique — subit moins de perte d'humanité. Le DFS reconnaît que la résistance individuelle et collective est une variable réelle, mesurable, qui compte."
+  },
+  vf: {
+    symbol: "Vf",
+    name: "Volume du matériau / Volume social exposé",
+    physics: "Dans la formule originale, le volume du matériau conducteur détermine l'ampleur totale des pertes : un grand bloc de métal perd plus qu'une fine feuille soumis au même champ. C'est le multiplicateur final — il transforme une densité de perte en perte totale absolue.",
+    social: "Dans le DFS, Vf est le volume social exposé — combien de personnes sont atteintes par la stigmatisation. Une lettre individuelle touche un seul Vs. Une politique institutionnelle discriminatoire touche des milliers. Vf transforme une mesure individuelle en impact social total.",
+    bridge: "C'est la variable de l'échelle. Elle rappelle que la stigmatisation n'est pas seulement un drame personnel — c'est un phénomène social dont l'amplitude dépend du nombre de personnes exposées. Vf est ce qui justifie le passage du cas individuel à la preuve systémique."
+  },
+  ks: {
+    symbol: "ks",
+    name: "Silence Complice — constante d'amplification historique",
+    physics: "Dans la formule de Foucault, certaines constantes encodent des propriétés profondes du matériau — des caractéristiques structurelles qui ne changent pas facilement et qui conditionnent tout le reste. Le facteur π²/6 en fait partie : il n'est pas dynamique, mais il est toujours là, multipliant silencieusement les pertes.",
+    social: "ks est notre ajout au modèle. Il représente le Silence Complice — le sédiment historique de préjugés partagés, d'accords tacites collectifs, d'impunité institutionnalisée. ks n'est pas une variable qui fluctue : c'est une constante sociale, profonde, héritée. Elle amplifie tous les autres facteurs sans exception.",
+    bridge: "Comme π²/6 est toujours présent dans la formule originale — invisible mais structurant — le Silence Complice est toujours présent dans la stigmatisation sociale. On ne le voit pas, on ne le nomme pas, mais il multiplie silencieusement chaque perte. C'est pourquoi excaver ks — le nommer, le mesurer, l'exposer — est le premier acte politique du DFS."
+  },
+  formula: {
+    symbol: "DFS",
+    name: "La formule comme fonction de transduction",
+    physics: "La formule originale de Foucault : P = π²· e² · Bmax² · f² / 6 · k · ρr. Elle calcule la puissance dissipée sous forme de chaleur par les courants induits dans un matériau conducteur soumis à un champ magnétique variable.",
+    social: "Le DFS adapte cette formule pour calculer P — la perte d'humanité infligée par la stigmatisation. Chaque variable physique a été transposée avec précision dans le domaine psychosocial. Le facteur π²/6 est remplacé par Vf — le volume social exposé — transformant une constante géométrique en variable de portée collective.",
+    bridge: "La formule mesure une perte. Le DFS mesure une perte. C'est aussi simple que cela — et c'est précisément cette simplicité qui fonde la rigueur de la transposition."
+  },
+  p: {
+    symbol: "P",
+    name: "Perte de chaleur / Perte d'humanité",
+    physics: "Dans la formule de Foucault, P est la puissance dissipée sous forme de chaleur par les courants de Foucault. C'est de l'énergie perdue — elle ne fait aucun travail utile, elle s'évapore simplement. Plus P est grand, plus le matériau s'épuise et se dégrade.",
+    social: "Dans le DFS, P mesure la perte d'humanité — la dévalorisation infligée à une personne ou à un groupe par la stigmatisation. C'est une perte réelle : d'énergie, de dignité, de confiance, de santé, de capacité à agir. P est invisible à l'œil nu, mais le DFS la rend mesurable, démontrable, juridiquement visible.",
+    bridge: "P dans les deux cas mesure la même chose : une perte d'énergie qui n'aurait pas dû se produire. Dans le métal, c'est du gaspillage thermique. Dans la société, c'est du gaspillage humain — une perte de potentiel, de dignité, de vie. Le DFS dit : cette perte est réelle, elle est mesurable, et elle peut être réparée."
+  }
+};
+
+function openVarPopup(key) {
+  var d = VAR_DATA[key];
+  if (!d) return;
+  document.getElementById('vp-symbol').textContent = d.symbol;
+  document.getElementById('vp-name').textContent = d.name;
+  document.getElementById('vp-physics').textContent = d.physics;
+  document.getElementById('vp-social').innerHTML = d.social;
+  document.getElementById('vp-bridge').textContent = d.bridge;
+  document.getElementById('vp').classList.add('on');
+  document.getElementById('vp-overlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeVarPopup() {
+  document.getElementById('vp').classList.remove('on');
+  document.getElementById('vp-overlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>

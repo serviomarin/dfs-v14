@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 — Section A2 : St et le langage corporel</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:#0A1628;color:#E8E0D0;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid rgba(200,168,112,0.2);position:sticky;top:0;background:rgba(10,22,40,0.97);z-index:50}
+.topbar-left{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870}
+.topbar-nav{display:flex;gap:18px}
+.topbar-nav a{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#706040;text-decoration:none}
+.topbar-nav a.active{color:#C8A870}
+.topbar-nav a:hover{color:#E8C890}
+.main{max-width:680px;margin:0 auto;padding:56px 30px}
+.eyebrow{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#C8A870;margin-bottom:14px}
+.sec-title{font-size:34px;font-weight:300;line-height:1.2;color:#E8E0D0;margin-bottom:8px}
+.sec-sub{font-size:16px;font-weight:300;font-style:italic;color:#907850;margin-bottom:44px;padding-bottom:30px;border-bottom:0.5px solid rgba(200,168,112,0.15)}
+.new-badge{display:inline-block;font-family:'Spectral',serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#0A1628;background:#C8A870;padding:3px 10px;border-radius:2px;margin-bottom:20px}
+.prose p{font-size:18px;font-weight:300;line-height:1.85;color:#D0C8B8;margin-bottom:22px;text-align:justify}
+.prose h2{font-family:'Spectral',serif;font-size:20px;font-weight:600;letter-spacing:0.06em;color:#E8E0D0;margin:44px 0 14px;padding-top:28px;border-top:0.5px solid rgba(200,168,112,0.12)}
+.quote-block{border-left:2px solid #C8A870;padding:18px 26px;margin:32px 0;background:rgba(200,168,112,0.04)}
+.quote-block p{font-size:19px!important;font-style:italic;color:#D8CEB8!important;text-align:left!important}
+.quote-author{font-family:'Spectral',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;margin-top:10px;display:block}
+.clink{color:#C8A870;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:italic}
+.cbox{background:rgba(200,168,112,0.06);border:0.5px solid rgba(200,168,112,0.25);border-radius:3px;padding:18px 22px;margin:24px 0}
+.cbox-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870;margin-bottom:8px}
+.cbox p{font-size:16px!important;color:#C0B8A0!important;margin-bottom:0!important;text-align:left!important}
+.alert-box{background:rgba(170,106,106,0.07);border:0.5px solid rgba(170,106,106,0.35);border-radius:3px;padding:18px 22px;margin:24px 0}
+.alert-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#AA6A6A;margin-bottom:8px}
+.alert-box p{font-size:16px!important;color:#C0B8A0!important;margin-bottom:0!important;text-align:left!important}
+.vr{font-style:italic;font-weight:600;color:#C8A870}
+.word-focus{display:block;text-align:center;font-size:28px;font-style:italic;color:#C8A870;margin:32px 0 8px;letter-spacing:0.05em}
+.word-lang{display:block;text-align:center;font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#706040;margin-bottom:8px}
+.word-def{display:block;text-align:center;font-size:15px;font-style:italic;color:#907850;margin-bottom:32px}
+.sec-footer{display:flex;justify-content:space-between;margin-top:56px;padding-top:24px;border-top:0.5px solid rgba(200,168,112,0.15)}
+.nav-btn{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#706040;background:none;border:0.5px solid rgba(200,168,112,0.2);padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none;transition:all 0.2s}
+.nav-btn:hover{color:#C8A870;border-color:rgba(200,168,112,0.6)}
+.nav-btn.next{background:rgba(200,168,112,0.08);color:#C8A870}
+.nav-btn.next:hover{background:rgba(200,168,112,0.18)}
+#pp{display:none;position:fixed;background:#0F1E32;border:0.5px solid rgba(200,168,112,0.5);border-radius:4px;padding:20px 22px;width:270px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+#pp.on{display:block}
+#pp-ey{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:6px}
+#pp-ti{font-size:17px;font-weight:400;color:#E8E0D0;margin-bottom:8px;line-height:1.3}
+#pp-bo{font-size:13px;font-weight:300;font-style:italic;line-height:1.6;color:#C0B8A0;margin-bottom:6px}
+#pp-fo{font-size:12px;color:#C8A870;background:rgba(200,168,112,0.08);padding:6px 10px;border-radius:2px;display:none}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+  <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html">A</a>
+    <a href="DFS_V14_section_A2.html" class="active">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html">B2</a>
+    <a href="DFS_V14_section_C_1.html">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html">G</a>
+  </div>
+</nav>
+
+<div class="main">
+  <span class="new-badge">Nouveau — V14</span>
+  <div class="eyebrow">Section A2</div>
+  <h1 class="sec-title">St et le langage corporel</h1>
+  <p class="sec-sub">Ce que la loi ne peut pas voir — et que la conscience ne peut pas oublier</p>
+
+  <div class="prose">
+
+    <p>La stigmatisation n&rsquo;habite pas uniquement les mots &eacute;crits. Elle vit &mdash; avec une force encore plus brutale &mdash; dans le geste, le regard, la posture, le silence charg&eacute;. Ces formes non verbales de St sont les plus anciennes, les plus universelles, et les plus impunies. Elles constituent le territoire que le droit n&rsquo;a pas encore su cartographier.</p>
+
+    <p>Pour d&eacute;signer ce ph&eacute;nom&egrave;ne, il existe en espagnol un mot que nul autre langue ne traduit exactement :</p>
+
+    <span class="word-focus">escamoteada</span>
+    <span class="word-lang">Espagnol — v. escamotear</span>
+    <span class="word-def">Faire dispara&icirc;tre de fa&ccedil;on arbitraire et illusoire — comme un tour de passe-passe —<br>en niant l&rsquo;existence m&ecirc;me de ce que l&rsquo;on efface.</span>
+
+    <p>En fran&ccedil;ais, on dirait <em>cach&eacute;e</em> &mdash; mais <em>escamoteada</em> dit bien davantage. Elle implique la <span class="clink" data-key="tricherie">tricherie</span>, l&rsquo;illusionnisme social, la complicit&eacute; de ceux qui regardent sans voir. C&rsquo;est ainsi que la classe dominante inflige et dissimule la St non verbale : non pas en la cachant, mais en faisant croire qu&rsquo;elle n&rsquo;existe pas.</p>
+
+    <p>Les membres du club des agents stigmatisants (As) sont pass&eacute;s ma&icirc;tres dans cet art de l&rsquo;<em>escamoteo</em>. Leur instrument privil&eacute;gi&eacute; : le langage corporel &mdash; le regard m&eacute;prisant, la posture de domination, le sourire faussement complaisant. Ces gestes transmettent le non-dit stigmatisant avec une efficacit&eacute; redoutable, pr&eacute;cis&eacute;ment parce qu&rsquo;ils ne laissent aucune trace &eacute;crite. La St est inflig&eacute;e, ressentie par la victime stigmatis&eacute;e (Vs) &mdash; et simultan&eacute;ment ni&eacute;e, effac&eacute;e, <em>escamoteada</em>.</p>
+
+    <h2>A2.1. Le regard qui remet &agrave; sa place</h2>
+
+    <p>Un regard qui te remet &agrave; ta place et te rappelle d&rsquo;o&ugrave; tu viens et &agrave; quelle classe sociale tu appartiens &mdash; ce regard ne peut pas &ecirc;tre poursuivi par la loi. Il ne laisse pas d&rsquo;empreinte dans un dossier. Il ne figure dans aucun proc&egrave;s-verbal. Et pourtant, celui qui l&rsquo;a re&ccedil;u le porte parfois toute une vie.</p>
+
+    <p>C&rsquo;est l&agrave; la premi&egrave;re grande <span class="clink" data-key="asymetrie">asymétrie juridique</span> que le DFS cherche &agrave; r&eacute;soudre : la St non verbale est r&eacute;elle, mesurable dans ses effets, transmissible culturellement &mdash; et pourtant juridiquement invisible.</p>
+
+    <div class="alert-box">
+      <div class="alert-label">Limite juridique actuelle</div>
+      <p>Un regard m&eacute;prisant, une attitude faussement complaisante, une posture de domination : aucun de ces actes n&rsquo;est aujourd&rsquo;hui sanctionnable par la loi, m&ecirc;me lorsque leurs effets sur la victime sont d&eacute;montrables et durables.</p>
+    </div>
+
+    <h2>A2.2. St comme <span class="clink" data-key="projectile">projectile</span> &mdash; Le langage corporel comme arme</h2>
+
+    <p>Il existe un ensemble de sous-espaces vectoriels de gestes, r&eacute;unis dans le grand espace vectoriel du <span class="clink" data-key="discours">discours r&eacute;f&eacute;rentiel</span> par une qualit&eacute; commune &mdash; une sorte de non-dit de l&rsquo;arrogance de la classe dominante. Les mots utilis&eacute;s comme <span class="clink" data-key="projectile">projectiles</span> pour blesser la dignit&eacute; des victimes de St font partie d&rsquo;un sous-ensemble qui interconnecte St avec la toile.</p>
+
+    <p>Ceci indique l&rsquo;existence d&rsquo;une autre toile contenant le grand ensemble : <strong style="color:#E8E0D0">la toile d&rsquo;araign&eacute;e corporelle</strong> &mdash; qui enveloppe l&rsquo;ensemble de l&rsquo;espace et des sous-espaces vectoriels contenant la racine d&rsquo;un langage stigmatisant non verbal mais corporel. Ce langage est compl&eacute;ment&eacute; par un ensemble de tons de voix indiquant les hi&eacute;rarchies &mdash; de multiples mani&egrave;res de dire <em>bonjour</em> pour mettre chacun &agrave; sa place.</p>
+
+    <div class="quote-block">
+      <p>Je le fais parce que je peux, peu importe ce que quelqu&rsquo;un d&rsquo;autre peut dire ou faire. J&rsquo;ai droit. Tu ne peux pas m&rsquo;arr&ecirc;ter &mdash; <strong style="color:#FFFFFF">personne.</strong></p>
+      <span class="quote-author">Voix de l&rsquo;arrogance stigmatisante &mdash; lecture DFS du geste non verbal &mdash; S.M.</span>
+    </div>
+
+    <p>C&rsquo;est ici que r&eacute;side la seconde <span class="clink" data-key="asymetrie">asymétrie juridique</span> : le DFS, pour le moment, travaille uniquement avec du texte &eacute;crit, sans int&eacute;grer encore toute la richesse de la communication multiple &mdash; voix, geste, expression corporelle. Mais en mesurant les traces &eacute;crites, il d&eacute;montre ce que le corps a d&eacute;j&agrave; inflig&eacute;.</p>
+
+    <h2>A2.3. La cr&eacute;dibilit&eacute; selon la classe sociale</h2>
+
+    <p>La St non verbale r&eacute;v&egrave;le une troisi&egrave;me asymétrie, plus profonde encore : celle de la <span class="clink" data-key="credibilite">crédibilité</span>. Dans une salle d&rsquo;audience, aucun t&eacute;moin issu des classes populaires n&rsquo;est consid&eacute;r&eacute; aussi cr&eacute;dible qu&rsquo;un VIP. Sa parole est structurellement d&eacute;valu&eacute;e &mdash; comme sa personne l&rsquo;a &eacute;t&eacute; avant lui.</p>
+
+    <div class="cbox">
+      <div class="cbox-label">Le cercle ferm&eacute; de l&rsquo;impunit&eacute;</div>
+      <p>St non verbale → pas de preuve → pas de recours → impunit&eacute; → St renforc&eacute;e. Le <span class="clink" data-key="sc">silence complice</span> ferme ce cercle. Le DFS est l&rsquo;instrument con&ccedil;u pour l&rsquo;ouvrir.</p>
+    </div>
+
+    <h2>A2.4. La transmission historique par le corps</h2>
+
+    <p>La St non verbale n&rsquo;est pas un ph&eacute;nom&egrave;ne moderne. Elle est le vecteur historique par lequel des soci&eacute;t&eacute;s enti&egrave;res ont organis&eacute; la domination. C&rsquo;est par le corps &mdash; par le regard, la posture, le geste, la distance physique impos&eacute;e &mdash; que des peuples entiers ont &eacute;t&eacute; abaiss&eacute;s de leur condition humaine jusqu&rsquo;&agrave; rendre possible leur transformation en esclaves.</p>
+
+    <p>Cette transmission est <em>culturelle</em> : elle s&rsquo;apprend, se reproduit, se naturalise. Elle devient invisible pr&eacute;cis&eacute;ment parce qu&rsquo;elle est partout. Elle est <span class="clink" data-key="tricherie">escamoteada</span> dans le tissu m&ecirc;me des relations sociales.</p>
+
+    <div class="cbox">
+      <div class="cbox-label">St et la variable <span style="color:#C8A870">ks</span></div>
+      <p>Dans la formule DFS, la constante <span class="vr">ks</span> absorbe ce s&eacute;diment historique. Une soci&eacute;t&eacute; o&ugrave; la St non verbale est culturellement transmise depuis des si&egrave;cles a un <span class="vr">ks</span> tr&egrave;s &eacute;lev&eacute; &mdash; ce qui amplifie tous les autres facteurs de stigmatisation, y compris ceux qui, eux, laissent des traces &eacute;crites.</p>
+    </div>
+
+    <h2>A2.5. Pourquoi le DFS peut avancer l&agrave; o&ugrave; la loi recule</h2>
+
+    <p>Le DFS ne pr&eacute;tend pas mesurer directement un regard ou un geste. Mais il mesure leurs <em>traces</em> : dans les mots choisis apr&egrave;s, dans la structure du texte qui suit, dans le <span class="clink" data-key="nondit">non-dit</span> qui enveloppe la communication &eacute;crite. La St non verbale pr&eacute;c&egrave;de et conditionne la St verbale &mdash; elle &eacute;l&egrave;ve le <span class="vr">ks</span>, pr&eacute;pare le terrain, rend possible l&rsquo;impunit&eacute;.</p>
+
+    <p>C&rsquo;est pourquoi la Section A2 n&rsquo;est pas une digression &mdash; c&rsquo;est le fondement anthropologique du DFS. Comprendre que St a commenc&eacute; dans le corps avant d&rsquo;arriver dans les mots, c&rsquo;est comprendre pourquoi mesurer les mots suffit &agrave; d&eacute;montrer ce que le corps a d&eacute;j&agrave; inflig&eacute;.</p>
+
+    <div class="quote-block">
+      <p>La stigmatisation, on ne peut pas la voir dans les mots &eacute;crits, mais on sent son oppressive odeur &mdash; &eacute;manant de sa structure sociale, consolid&eacute;e et fusionnellement dilu&eacute;e dans les fils empoisonn&eacute;s de la toile d&rsquo;araign&eacute;e du Discours R&eacute;f&eacute;rentiel m&eacute;prisant.</p>
+      <span class="quote-author">&mdash; Servio Marin</span>
+    </div>
+
+  </div>
+
+  <div class="sec-footer">
+    <a href="DFS_V14_section_A_3.html" class="nav-btn">&larr; Section A</a>
+    <a href="DFS_V14_section_B_4.html" class="nav-btn next">Section B &rarr;</a>
+  </div>
+</div>
+
+<!-- POPUP SYSTEM -->
+<div id="pp">
+  <div id="pp-ey"></div>
+  <div id="pp-ti"></div>
+  <div id="pp-bo"></div>
+  <div id="pp-fo"></div>
+</div>
+
+<script>
+var D = {
+  tricherie:{
+    ey:"Concept central \u2014 A2",
+    ti:"Escamoteada",
+    bo:"De l\u2019espagnol escamotear : faire dispara\u00eetre de fa\u00e7on arbitraire et illusoire. Implique la tricherie, l\u2019illusionnisme social \u2014 pas simplement cacher, mais faire croire que cela n\u2019existe pas.",
+    fo:null
+  },
+  asymetrie:{
+    ey:"Probl\u00e8me juridique",
+    ti:"L\u2019asym\u00e9trie juridique de St",
+    bo:"St non verbale est r\u00e9elle dans ses effets mais juridiquement invisible. St enregistr\u00e9e sur vid\u00e9o reste difficilement punissable. Un t\u00e9moin des classes populaires est structurellement moins cr\u00e9dible qu\u2019un VIP devant un tribunal.",
+    fo:"Le DFS vise \u00e0 r\u00e9duire cette asym\u00e9trie par la mesure"
+  },
+  projectile:{
+    ey:"M\u00e9taphore DFS",
+    ti:"St comme projectile",
+    bo:"Quand St devient geste public \u2014 le majeur lev\u00e9, le regard de m\u00e9pris affich\u00e9 \u2014 elle se transforme en projectile : elle atteint non seulement la cible directe mais envoie un message \u00e0 toute la soci\u00e9t\u00e9 sur ce qui est permis.",
+    fo:"Vf (volume social expos\u00e9) cro\u00eet exponentiellement"
+  },
+  discours:{
+    ey:"Concept cl\u00e9",
+    ti:"Le Discours R\u00e9f\u00e9rentiel",
+    bo:"Un ensemble de conceptions psychosociales qui d\u00e9termine le choix des mots. Comme une toile d\u2019araign\u00e9e, il fait vibrer par r\u00e9sonance des connotations non \u00e9crites \u2014 la couche invisible sur laquelle repose toute communication stigmatisante.",
+    fo:null
+  },
+  sc:{
+    ey:"Variable ks",
+    ti:"Le Silence Complice",
+    bo:"Le silence complice n\u2019est pas l\u2019absence de stigmatisation \u2014 il en est la forme la plus puissante. Il ferme le cercle de l\u2019impunit\u00e9 en validant tacitement les actes de St, verbaux comme non verbaux.",
+    fo:"ks = susceptibilit\u00e9 sociale \u2014 s\u00e9diment historique du SC"
+  },
+  credibilite:{
+    ey:"Asym\u00e9trie de cr\u00e9dibilit\u00e9",
+    ti:"La cr\u00e9dibilit\u00e9 selon la classe sociale",
+    bo:"Dans une salle d\u2019audience, la parole d\u2019un t\u00e9moin des classes populaires est structurellement d\u00e9valoris\u00e9e face \u00e0 celle d\u2019un VIP. C\u2019est une forme de St institutionnelle int\u00e9gr\u00e9e dans le syst\u00e8me judiciaire lui-m\u00eame.",
+    fo:"Renforce le besoin d\u2019un instrument objectif comme le DFS"
+  },
+  nondit:{
+    ey:"Variable Bmax",
+    ti:"Le Non-dit stigmatisant",
+    bo:"St non verbale laisse des traces dans la structure du langage \u00e9crit qui suit. Le non-dit encode le bl\u00e2me dans la syntaxe en pr\u00e9servant la d\u00e9niabilit\u00e9 \u2014 mesur\u00e9 par le barom\u00e8tre DFS ligne par ligne.",
+    fo:"Mesur\u00e9 par Bmax dans la formule DFS"
+  }
+};
+
+var pp=document.getElementById('pp'),tm=null;
+function show(el,key){
+  if(tm){clearTimeout(tm);tm=null;}
+  var d=D[key];if(!d)return;
+  document.getElementById('pp-ey').textContent=d.ey;
+  document.getElementById('pp-ti').textContent=d.ti;
+  document.getElementById('pp-bo').textContent=d.bo;
+  var fo=document.getElementById('pp-fo');
+  if(d.fo){fo.innerHTML=d.fo;fo.style.display='block';if(window.MathJax)MathJax.typesetPromise([fo]);}else{fo.style.display='none';}
+  var r=el.getBoundingClientRect();
+  /* measure real popup height off-screen */
+  pp.style.visibility='hidden';
+  pp.style.left='0px';
+  pp.style.top='-9999px';
+  pp.className='on';
+  var ppW=pp.offsetWidth||270;
+  var ppH=pp.offsetHeight||200;
+  pp.className='';
+  pp.style.visibility='';
+  /* horizontal: prefer right of link, fall back to left */
+  var left=r.right+12;
+  if(left+ppW>window.innerWidth-8){left=r.left-ppW-12;}
+  if(left<8){left=8;}
+  /* vertical: prefer aligned to top of link, shift up if clips bottom */
+  var top=r.top;
+  if(top+ppH>window.innerHeight-8){top=r.bottom-ppH;}
+  if(top<8){top=8;}
+  pp.style.left=left+'px';
+  pp.style.top=top+'px';
+  pp.className='on';
+}
+function hide(){tm=setTimeout(function(){pp.className='';},250);}
+var links=document.querySelectorAll('.clink');
+for(var i=0;i<links.length;i++){
+  (function(el){
+    el.addEventListener('mouseenter',function(){show(el,el.dataset.key);});
+    el.addEventListener('mouseleave',hide);
+  })(links[i]);
+}
+pp.addEventListener('mouseenter',function(){if(tm){clearTimeout(tm);tm=null;}});
+pp.addEventListener('mouseleave',hide);
+</script>
+</body>
+</html>

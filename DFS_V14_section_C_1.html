@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFS V14 — Section C : Le double tranchant psychosocial</title>
+<script>
+MathJax = { tex: {inlineMath: [["$","$"]], displayMath: [["$$","$$"]]}, svg: {fontCache: "global"} };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:#2A4A6A;color:#E8E0D0;padding-bottom:80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid rgba(200,168,112,0.2);position:sticky;top:0;background:rgba(42,74,106,0.97);z-index:50}
+.topbar-left{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870}
+.topbar-nav{display:flex;gap:18px;flex-wrap:wrap}
+.topbar-nav a{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#A09070;text-decoration:none;transition:color 0.2s}
+.topbar-nav a.active{color:#C8A870}
+.topbar-nav a:hover{color:#E8C890}
+.main{max-width:680px;margin:0 auto;padding:56px 30px}
+.eyebrow{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#C8A870;margin-bottom:14px}
+.sec-title{font-size:34px;font-weight:300;line-height:1.2;color:#E8E0D0;margin-bottom:8px}
+.sec-sub{font-size:16px;font-weight:300;font-style:italic;color:#B09870;margin-bottom:44px;padding-bottom:30px;border-bottom:0.5px solid rgba(200,168,112,0.15)}
+.prose p{font-size:18px;font-weight:300;line-height:1.85;color:#E0D8C8;margin-bottom:22px;text-align:justify}
+.prose h2{font-family:'Spectral',serif;font-size:20px;font-weight:600;letter-spacing:0.06em;color:#F0E8D8;margin:44px 0 14px;padding-top:28px;border-top:0.5px solid rgba(200,168,112,0.12)}
+.clink{color:#C8A870;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:italic}
+.vr{font-style:italic;font-weight:600;color:#C8A870}
+.quote-block{border-left:2px solid #C8A870;padding:18px 26px;margin:32px 0;background:rgba(200,168,112,0.04)}
+.quote-block p{font-size:19px!important;font-style:italic;color:#D8CEB8!important;text-align:left!important}
+.quote-author{font-family:'Spectral',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;margin-top:10px;display:block}
+
+/* BINOME TABLE */
+.binome-table{width:100%;border-collapse:collapse;margin:28px 0}
+.binome-table th{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:12px 16px;border-bottom:1px solid rgba(200,168,112,0.3);text-align:left}
+.binome-table th:first-child{color:#706040;background:rgba(200,168,112,0.04);width:100px}
+.binome-table th:nth-child(2){color:#6A9AAA;background:rgba(106,154,170,0.06)}
+.binome-table th:nth-child(3){color:#AA6A6A;background:rgba(170,106,106,0.06)}
+.binome-table td{padding:14px 16px;border-bottom:0.5px solid rgba(200,168,112,0.1);font-size:15px;font-weight:300;color:#D0C8B8;vertical-align:top;line-height:1.6}
+.binome-table td:first-child{font-family:'Spectral',serif;font-size:10px;color:#C8A870;font-weight:600}
+.binome-table td:nth-child(2){background:rgba(106,154,170,0.04);border-left:1px solid rgba(106,154,170,0.2)}
+.binome-table td:nth-child(3){background:rgba(170,106,106,0.04);border-left:1px solid rgba(170,106,106,0.2)}
+
+/* BOXES */
+.cbox{background:rgba(200,168,112,0.07);border:0.5px solid rgba(200,168,112,0.3);border-radius:3px;padding:18px 22px;margin:24px 0}
+.cbox-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#C8A870;margin-bottom:10px}
+.cbox p{font-size:16px!important;color:#D0C8B0!important;margin-bottom:8px!important;text-align:left!important;line-height:1.6!important}
+.cbox p:last-child{margin-bottom:0!important}
+.legal-box{background:rgba(106,170,133,0.07);border:0.5px solid rgba(106,170,133,0.35);border-radius:3px;padding:20px 24px;margin:28px 0}
+.legal-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#6AAA85;margin-bottom:12px}
+.legal-box p{font-size:16px!important;color:#D0C8B0!important;margin-bottom:8px!important;text-align:left!important;line-height:1.6!important}
+.legal-box p:last-child{margin-bottom:0!important}
+.alert-box{background:rgba(170,106,106,0.07);border:0.5px solid rgba(170,106,106,0.3);border-radius:3px;padding:18px 22px;margin:24px 0}
+.alert-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#AA6A6A;margin-bottom:8px}
+.alert-box p{font-size:16px!important;color:#D0C8B0!important;margin-bottom:0!important;text-align:left!important}
+
+.parallel-box{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap}
+.parallel-item{flex:1;min-width:200px;padding:18px;border:0.5px solid rgba(200,168,112,0.2);border-radius:3px;background:rgba(200,168,112,0.04)}
+.parallel-label{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C8A870;margin-bottom:8px}
+.parallel-item p{font-size:14px;font-weight:300;color:#C0B8A0;line-height:1.5}
+
+.sec-footer{display:flex;justify-content:space-between;margin-top:56px;padding-top:24px;border-top:0.5px solid rgba(200,168,112,0.15)}
+.nav-btn{font-family:'Spectral',serif;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:#A09070;background:none;border:0.5px solid rgba(200,168,112,0.25);padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none;transition:all 0.2s}
+.nav-btn:hover{color:#C8A870;border-color:rgba(200,168,112,0.6)}
+.nav-btn.next{background:rgba(200,168,112,0.08);color:#C8A870}
+.nav-btn.next:hover{background:rgba(200,168,112,0.18)}
+
+/* POPUP */
+#pp{display:none;position:fixed;background:#1E3452;border:0.5px solid rgba(200,168,112,0.55);border-radius:4px;padding:20px 22px;width:270px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+#pp.on{display:block}
+#pp-ey{font-family:'Spectral',serif;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#C8A870;margin-bottom:6px}
+#pp-ti{font-size:17px;font-weight:400;color:#F0E8D8;margin-bottom:8px;line-height:1.3}
+#pp-bo{font-size:13px;font-weight:300;font-style:italic;line-height:1.6;color:#C8C0A8;margin-bottom:6px}
+#pp-fo{font-size:12px;color:#C8A870;background:rgba(200,168,112,0.1);padding:6px 10px;border-radius:2px;display:none}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-left">DFS V14</div>
+    <div class="topbar-nav">
+    <a href="DFS_V14_navigation_V15.html">Menu</a>
+    <a href="DFS_V14_section_A_3.html">A</a>
+    <a href="DFS_V14_section_A2.html">A2</a>
+    <a href="DFS_V14_section_B_4.html">B</a>
+    <a href="DFS_V14_section_B2_1.html">B2</a>
+    <a href="DFS_V14_section_C_1.html" class="active">C</a>
+    <a href="DFS_V14_section_D_1.html">D</a>
+    <a href="DFS_V14_section_E_1.html">E</a>
+    <a href="DFS_V14_section_F_1.html">F</a>
+    <a href="DFS_V14_section_G_1.html">G</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="eyebrow">Section C</div>
+  <h1 class="sec-title">Le double tranchant<br>psychosocial</h1>
+  <p class="sec-sub">St et le bin&ocirc;me <span class="vr">Vs</span> / <span class="vr">As</span> &mdash; celui qui stigmatise est prisonnier de ce qu&rsquo;il inflige</p>
+
+  <div class="prose">
+
+    <h2>C1. La fonction &agrave; double tranchant</h2>
+
+    <p>La fonction math&eacute;matique de la stigmatisation est un processus &agrave; double tranchant. D&rsquo;une part, St poss&egrave;de son propre processus interne de sustentation &mdash; la <span class="clink" data-key="siem">sustentation interne &eacute;lectromagn&eacute;tique (SieM)</span> &mdash; analogue aux courants de Foucault qui circulent dans le mat&eacute;riau. D&rsquo;autre part, la fonction St affecte des processus externes de nature socio&eacute;conomique : relations sociales, disponibilit&eacute; des ressources, stress, r&eacute;ponses psychologiques et comportementales.</p>
+
+    <p>De cette fa&ccedil;on, St finit par affecter &eacute;conomiquement des institutions de l&rsquo;&Eacute;tat telles que l&rsquo;Assurance Maladie, la CAF, P&ocirc;le Emploi &mdash; et toutes les institutions li&eacute;es &agrave; la cr&eacute;ation, l&rsquo;approbation et le renforcement des lois, ainsi qu&rsquo;&agrave; l&rsquo;impl&eacute;mentation de la <span class="clink" data-key="sanction">Sanction officielle et de la Sanction de fait</span>.</p>
+
+    <div class="cbox">
+      <div class="cbox-label">St comme cancer social</div>
+      <p>Chaque personne stigmatis&eacute;e dont la sant&eacute; se d&eacute;grade co&ucirc;te &agrave; l&rsquo;Assurance Maladie. Chaque travailleur dont la productivit&eacute; diminue dans un environnement de m&eacute;pris co&ucirc;te &agrave; l&rsquo;&eacute;conomie. Chaque enfant stigmatis&eacute; &agrave; l&rsquo;&eacute;cole co&ucirc;te &agrave; la r&eacute;ussite scolaire nationale. L&rsquo;&eacute;limination de St repr&eacute;sente l&rsquo;&eacute;conomie de milliards d&rsquo;euros pour la nation.</p>
+    </div>
+
+    <h2>C2. Le bin&ocirc;me <span class="vr">K(Vs + As)</span> &mdash; La variable la plus originale</h2>
+
+    <p>Le bin&ocirc;me <span class="clink" data-key="binome">(Vs + As)</span> constitue une interrelation complexe entre l&rsquo;<span class="clink" data-key="Vs">individu stigmatis&eacute; (Vs)</span> et l&rsquo;<span class="clink" data-key="As">agent stigmatisant (As)</span>. Car celui qui stigmatise est en v&eacute;rit&eacute; prisonnier de la stigmatisation qu&rsquo;il projette sur Vs.</p>
+
+    <table class="binome-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Vs &mdash; Individu stigmatis&eacute;</th>
+          <th>As &mdash; Agent stigmatisant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R&ocirc;le</td>
+          <td>Re&ccedil;oit les d&eacute;charges stigmatisantes. Apprend &agrave; les d&eacute;tecter, &agrave; les identifier, &agrave; les surmonter avec l&rsquo;exp&eacute;rience.</td>
+          <td>Envoie des charges stigmatisantes comme un atome trop charg&eacute; &mdash; souvent sans en &ecirc;tre conscient.</td>
+        </tr>
+        <tr>
+          <td><span class="vr">&rho;r</span></td>
+          <td>Capital social, contre-discours, fiert&eacute; identitaire, r&eacute;seau de soutien. Plus <span class="vr">&rho;r</span> est &eacute;lev&eacute;, moins P p&eacute;n&egrave;tre.</td>
+          <td>Inconscient collectif, s&eacute;diment historique, <span class="vr">ks</span> &eacute;lev&eacute;. As stigmatise parfois sans le savoir &mdash; d&rsquo;o&ugrave; la question de l&rsquo;imputabilit&eacute;.</td>
+        </tr>
+        <tr>
+          <td>Lib&eacute;ration</td>
+          <td>Quand <span class="vr">Vf &rarr; 0</span> : prise de conscience, sortie de la souffrance, r&eacute;cup&eacute;ration de l&rsquo;agentivit&eacute;.</td>
+          <td>Quand le DFS d&eacute;clenche l&rsquo;alarme : As comprend l&rsquo;ampleur de ses actes &mdash; destructeurs de sa victime, de lui-m&ecirc;me, du bien-&ecirc;tre national.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="quote-block">
+      <p>Celui qui stigmatise n&rsquo;est pas libre &mdash; il est prisonnier du m&eacute;pris qu&rsquo;il projette. Le DFS lib&egrave;re les deux : Vs de sa souffrance, As de son aveuglement.</p>
+      <span class="quote-author">&mdash; Servio Marin</span>
+    </div>
+
+    <h2>C3. La <span class="clink" data-key="negligence">n&eacute;gligence de pouvoir</span> &mdash; Nouvelle cat&eacute;gorie juridique</h2>
+
+    <p>Si As stigmatise sans le savoir &mdash; par effet de l&rsquo;inconscient collectif et du <span class="clink" data-key="ks">ks</span> &eacute;lev&eacute; &mdash; cela cr&eacute;e une nouvelle cat&eacute;gorie l&eacute;gale : la <span class="clink" data-key="negligence">n&eacute;gligence de pouvoir</span>. Punissable non parce que quelqu&rsquo;un avait l&rsquo;intention de nuire, mais parce que les conditions qu&rsquo;il maintenait ou ne corrigeait pas produisaient un pr&eacute;judice d&eacute;montrable.</p>
+
+    <p>Cette cat&eacute;gorie existe partiellement en droit. Le DFS &eacute;tend cette logique &agrave; la stigmatisation institutionnelle :</p>
+
+    <div class="parallel-box">
+      <div class="parallel-item">
+        <div class="parallel-label">Discrimination indirecte</div>
+        <p>Politiques neutres en apparence mais aux effets in&eacute;gaux &mdash; droit europ&eacute;en</p>
+      </div>
+      <div class="parallel-item">
+        <div class="parallel-label">Droit environnemental</div>
+        <p>Pollution punissable sans intention de nuire</p>
+      </div>
+      <div class="parallel-item">
+        <div class="parallel-label">Responsabilit&eacute; professionnelle</div>
+        <p>N&eacute;gligence punissable m&ecirc;me sans malveillance</p>
+      </div>
+      <div class="parallel-item">
+        <div class="parallel-label">Harc&egrave;lement moral</div>
+        <p>Punissable m&ecirc;me quand l&rsquo;auteur nie l&rsquo;intention</p>
+      </div>
+    </div>
+
+    <div class="legal-box">
+      <div class="legal-label">Doctrine juridique nouvelle fond&eacute;e par le DFS</div>
+      <p>La stigmatisation structurelle comme <strong style="color:#E8E0D0">d&eacute;lit objectif</strong> &mdash; punissable non parce que quelqu&rsquo;un avait l&rsquo;intention de nuire, mais parce que les conditions qu&rsquo;il maintenait produisaient un pr&eacute;judice d&eacute;montrable et mesurable.</p>
+      <p>L&rsquo;obligation professionnelle de savoir ce que l&rsquo;on fait &mdash; <em>neglegere</em> : ne pas voir ce que l&rsquo;on &eacute;tait oblig&eacute; de voir.</p>
+    </div>
+
+    <h2>C4. Le r&ocirc;le pernicieux du <span class="clink" data-key="cloisonnement">cloisonnement</span></h2>
+
+    <p>Le cloisonnement permet l&rsquo;&laquo;&nbsp;envoi de la balle de responsabilit&eacute;&nbsp;&raquo; ailleurs, dans l&rsquo;invisible, escamotant les irr&eacute;gularit&eacute;s et perp&eacute;tuant l&rsquo;injustice et l&rsquo;exclusion. Dans le mail de R1, P1 d&eacute;ploie cinq murs institutionnels en huit lignes : comptabilit&eacute;, CS, TR, LP, proc&eacute;dure. Chaque mur est une unit&eacute; de cloisonnement mesur&eacute;e par la variable <span class="vr">e</span>.</p>
+
+    <div class="alert-box">
+      <div class="alert-label">Le cercle ferm&eacute; du cloisonnement</div>
+      <p>Chaque renvoi vers un autre service ou une autre proc&eacute;dure ajoute &agrave; <span class="vr">e</span> &mdash; &eacute;paisseur de la toile r&eacute;f&eacute;rentielle &mdash; et r&eacute;duit la capacit&eacute; de Vs &agrave; trouver un responsable. La responsabilit&eacute; se dissout dans l&rsquo;invisible. C&rsquo;est la m&eacute;canique de l&rsquo;impunit&eacute; institutionnelle.</p>
+    </div>
+
+    <h2>C5. La condition <span class="vr">Vf = 0</span> &mdash; La lib&eacute;ration</h2>
+
+    <p>Quand <span class="vr">Vf = 0</span>, P = 0 et <span class="clink" data-key="siem">SieM</span> devient aussi &eacute;gal &agrave; z&eacute;ro. Ce n&rsquo;est pas un &eacute;tat physiquement atteignable, mais une limite th&eacute;orique vers laquelle tendent l&rsquo;&eacute;ducation, la l&eacute;gislation et l&rsquo;usage syst&eacute;matique du DFS.</p>
+
+    <p>Dans un sens concret : quand tout le monde sait que le DFS peut prouver une violation des droits humains, et que As et son institution seront soumis aux sanctions pr&eacute;vues par la loi, les d&eacute;charges stigmatisantes cessent progressivement. <strong style="color:#E8E0D0">Les forces oppressives deviennent des forces stimulantes.</strong></p>
+
+    <div class="cbox">
+      <div class="cbox-label">La double lib&eacute;ration</div>
+      <p><strong style="color:#E8E0D0">Vs :</strong> prise de conscience, sortie de la souffrance, r&eacute;cup&eacute;ration de l&rsquo;agentivit&eacute;.</p>
+      <p><strong style="color:#E8E0D0">As :</strong> comprend l&rsquo;ampleur de ses actes &mdash; destructeurs de sa victime, de lui-m&ecirc;me, et du bien-&ecirc;tre national.</p>
+    </div>
+
+  </div>
+
+    <div class="sec-footer">
+    <a href="DFS_V14_section_B2_1.html" class="nav-btn">&larr; Section B2</a>
+    <a href="DFS_V14_section_D_1.html" class="nav-btn next">Section D &rarr;</a>
+  </div>
+</div>
+
+<div id="pp">
+  <div id="pp-ey"></div>
+  <div id="pp-ti"></div>
+  <div id="pp-bo"></div>
+  <div id="pp-fo"></div>
+</div>
+
+<script>
+var D = {
+  siem:{ey:"Concept DFS",ti:"SieM — Sustentation interne électromagnétique",bo:"Processus par lequel St se nourrit d'elle-même — analogue aux courants de Foucault circulant dans le matériau. St génère du plaisir chez As, ce plaisir renforce le comportement, qui renforce St. Un cercle auto-entretenu.",fo:"Quand Vf → 0, SieM → 0 aussi"},
+  sanction:{ey:"Concept juridique",ti:"Sanction de fait vs Sanction officielle",bo:"La Sanction officielle est inscrite dans un règlement. La Sanction de fait est une punition réelle infligée sans acte officiel — retard de remboursement, exclusion informelle, traitement dégradant. Juridiquement invisible mais réelle dans ses effets.",fo:"Nouvelle catégorie juridique fondée par le DFS"},
+  binome:{ey:"Variable ρr",ti:"Le binôme Vs + As",bo:"Interrelation complexe entre l'victime stigmatisé (Vs) et l'agent stigmatisant (As). Les deux sont affectés par St — Vs dans sa dignité et sa santé, As dans sa liberté morale et sa responsabilité professionnelle.",fo:"K(Vs + As) — au dénominateur de la formule DFS"},
+  Vs:{ey:"Victime stigmatisé",ti:"Vs — Capital de résistance",bo:"ρr mesure la capacité de Vs à résister : capital social, contre-discours, fierté identitaire, réseau de soutien. Pour R1 : ρr = 0.25 — résistance faible mais réelle (a conservé le mail, 4 ans d'expérience).",fo:"ρr = 0.25 pour R1 — confirmé V14"},
+  As:{ey:"Agent stigmatisant",ti:"As — L'atome trop chargé",bo:"As envoie des charges stigmatisantes souvent sans en être conscient. Prisonnier de l'inconscient collectif et du ks élevé. Sa libération passe par la prise de conscience que le DFS rend possible.",fo:"Négligence de pouvoir — obligation de savoir"},
+  negligence:{ey:"Nouvelle catégorie juridique",ti:"La négligence de pouvoir",bo:"Punissable non parce que As avait l'intention de nuire, mais parce que les conditions qu'il maintenait produisaient un préjudice démontrable. Analogue à la responsabilité professionnelle en droit médical ou environnemental.",fo:"Fondée par le DFS — Section E"},
+  ks:{ey:"Variable ks",ti:"Le Silence Complice — susceptibilité sociale",bo:"Sédiment historique du silence complice. Une société où le SC est profond et ancien a un ks élevé qui amplifie tous les facteurs de stigmatisation. L'excavation du ks est un préalable à toute intervention efficace.",fo:"ks absorbé dans k — contexte institutionnel"},
+  cloisonnement:{ey:"Variable e",ti:"Le Cloisonnement institutionnel",bo:"Disperser la responsabilité entre services pour rendre l'imputabilité impossible. Chaque renvoi ajoute à e — épaisseur de la toile référentielle. 5 murs institutionnels en 8 lignes dans le mail R1 = e élevé.",fo:"e = 0.90 dans le mail R1"}
+};
+
+var pp=document.getElementById('pp'),tm=null;
+function show(el,key){
+  if(tm){clearTimeout(tm);tm=null;}
+  var d=D[key];if(!d)return;
+  document.getElementById('pp-ey').textContent=d.ey;
+  document.getElementById('pp-ti').textContent=d.ti;
+  document.getElementById('pp-bo').textContent=d.bo;
+  var fo=document.getElementById('pp-fo');
+  if(d.fo){fo.innerHTML=d.fo;fo.style.display='block';if(window.MathJax)MathJax.typesetPromise([fo]);}else{fo.style.display='none';}
+  pp.style.visibility='hidden';
+  pp.style.left='0px';
+  pp.style.top='-9999px';
+  pp.className='on';
+  var r=el.getBoundingClientRect();
+  var ppW=pp.offsetWidth||270;
+  var ppH=pp.offsetHeight||200;
+  pp.className='';
+  pp.style.visibility='';
+  var left=r.right+12;
+  if(left+ppW>window.innerWidth-8){left=r.left-ppW-12;}
+  if(left<8){left=8;}
+  var top=r.top;
+  if(top+ppH>window.innerHeight-8){top=r.bottom-ppH;}
+  if(top<8){top=8;}
+  pp.style.left=left+'px';
+  pp.style.top=top+'px';
+  pp.className='on';
+}
+function hide(){tm=setTimeout(function(){pp.className='';},250);}
+document.querySelectorAll('.clink').forEach(function(el){
+  el.addEventListener('mouseover',function(){show(el,el.dataset.key);});
+  el.addEventListener('mouseout',hide);
+  el.addEventListener('click',function(e){e.preventDefault();if(pp.className==='on'&&pp._key===el.dataset.key){hide();}else{pp._key=el.dataset.key;show(el,el.dataset.key);}});
+});
+pp.addEventListener('mouseover',function(){if(tm){clearTimeout(tm);tm=null;}});
+pp.addEventListener('mouseout',hide);
+</script>
+</body>
+</html>
